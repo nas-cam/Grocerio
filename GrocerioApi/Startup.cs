@@ -10,7 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using GrocerioApi.Database.Context;
+using GrocerioApi.Security;
+using GrocerioApi.Services.Account;
+using GrocerioApi.Services.Admin;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -33,11 +38,42 @@ namespace GrocerioApi
             //Swagger
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Grocerio API", Version = "v1" });
+
+                c.AddSecurityDefinition("basicAuth", new OpenApiSecurityScheme()
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    Description = "Input your username and password to access this API",
+                    In = ParameterLocation.Header,
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "basicAuth" }
+                        }, new List<string>() }
+                });
             });
+
 
             //Database
             services.AddDbContext<GrocerioContext>(options => options.UseSqlServer(Configuration.GetConnectionString("connectionString")));
 
+
+            //AutoMapper
+            services.AddAutoMapper();
+
+            //Authentication
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            //DI
+            services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IAccountService, AccountService>();
 
         }
 
@@ -57,6 +93,7 @@ namespace GrocerioApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
