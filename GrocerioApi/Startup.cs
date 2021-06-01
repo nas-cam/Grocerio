@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GrocerioApi.Database.Context;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace GrocerioApi
@@ -32,6 +34,10 @@ namespace GrocerioApi
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Grocerio API", Version = "v1" });
             });
+
+            //Database
+            services.AddDbContext<GrocerioContext>(options => options.UseSqlServer(Configuration.GetConnectionString("connectionString")));
+
 
         }
 
