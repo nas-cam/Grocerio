@@ -9,6 +9,7 @@ using GrocerioApi.Database.Context;
 using GrocerioApi.Exceptions;
 using GrocerioModels.Requests.User;
 using Microsoft.OpenApi.Models;
+using Role = GrocerioApi.Enums.Role;
 
 namespace GrocerioApi.Services.Account
 {
@@ -72,12 +73,15 @@ namespace GrocerioApi.Services.Account
 
             if (account != null)
             {
+                if (account.Role == Role.User)
+                {
+                    var user = _context.Users.Select(x=>new {x.AccountId, x.Active}).Single(u => u.AccountId == account.AccountId);
+                    if (!user.Active) return null;
+                }
+
                 var newHash = GenerateHash(account.PasswordSalt, pass);
 
-                if (newHash == account.PasswordHash)
-                {
-                    return _mapper.Map<GrocerioModels.Users.Account>(account);
-                }
+                if (newHash == account.PasswordHash) return _mapper.Map<GrocerioModels.Users.Account>(account);
             }
             return null;
         }

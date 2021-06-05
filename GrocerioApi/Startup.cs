@@ -15,6 +15,8 @@ using GrocerioApi.Database.Context;
 using GrocerioApi.Security;
 using GrocerioApi.Services.Account;
 using GrocerioApi.Services.Admin;
+using GrocerioApi.Services.Login;
+using GrocerioApi.Services.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -74,6 +76,8 @@ namespace GrocerioApi
             //DI
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILoginService, LoginService>();
 
         }
 
