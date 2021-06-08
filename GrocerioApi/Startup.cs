@@ -63,7 +63,7 @@ namespace GrocerioApi
 
 
             //Database
-            services.AddDbContext<GrocerioContext>(options => options.UseSqlServer(Configuration.GetConnectionString("connectionString")));
+            services.AddDbContext<GrocerioContext>(options => options.UseSqlServer(Configuration.GetConnectionString("connString")));
 
 
             //AutoMapper
