@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using GrocerioApi.Database.Context;
 using GrocerioApi.Enums;
@@ -23,7 +24,8 @@ namespace GrocerioApi.Services.Login
 
         public LoginResponse Login(string username)
         {
-            var account = _context.Accounts.Single(a => a.Username.ToLower() == username.ToLower());
+            var account = _context.Accounts.SingleOrDefault(a => a.Username.ToLower() == username.ToLower());
+            if (account == null) return new LoginResponse();
 
             if (account.Role == Role.Admin)
             {

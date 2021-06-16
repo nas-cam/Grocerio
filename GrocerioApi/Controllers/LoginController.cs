@@ -25,7 +25,9 @@ namespace GrocerioApi.Controllers
         [HttpGet("{username}")]
         public ActionResult<LoginResponse> Login(string username)
         {
-            return Ok(_loginService.Login(username));
+            var response = _loginService.Login(username);
+            if (response.Username == null) return NotFound(response);
+            return Ok(response);
         }
 
 

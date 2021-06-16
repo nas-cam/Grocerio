@@ -177,5 +177,13 @@ namespace GrocerioApi.Services.User
                 Success = true
             };
         }
+
+        public StringResponse HandleLock(bool flag)
+        {
+            var allUsers = _context.Users.ToList();
+            foreach (var user in allUsers) user.Locked = flag;
+            _context.SaveChanges();
+            return new StringResponse() {Message = flag ? "All users have been locked" : "All users have been unlocked"};
+        }
     }
 }

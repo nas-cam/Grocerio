@@ -73,5 +73,12 @@ namespace GrocerioApi.Controllers
             if (!response.Success) return BadRequest(new StringResponse() {Message = response.Message});
             return Ok(new StringResponse() { Message = response.Message });
         }
+
+        [HttpGet("HandleLock/{flag}")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<StringResponse> HandleLock(bool flag)
+        {
+            return Ok(_userService.HandleLock(flag));
+        }
     }
 }
