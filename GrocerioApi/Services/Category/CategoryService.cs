@@ -103,7 +103,7 @@ namespace GrocerioApi.Services.Category
 
             response.Success = true;
             response.Category = _mapper.Map<InsertCategoryRequest>(category);
-            response.Message = $"The category with the id {request.CategoryId} has been updates successfully";
+            response.Message = $"The category with the id {request.CategoryId} has been updated successfully";
 
             return response;
         }

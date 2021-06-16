@@ -17,6 +17,8 @@ namespace GrocerioApi.Mappers
             CreateMap<Database.Entities.User, GrocerioModels.Requests.User.InsertUserRequest>().ReverseMap();
             CreateMap<Database.Entities.Category, GrocerioModels.Requests.Category.InsertCategoryRequest>().ReverseMap();
             CreateMap<Database.Entities.Category, GrocerioModels.Category.Category>().ReverseMap();
+            CreateMap<Database.Entities.Product, GrocerioModels.Requests.Product.InsertProductRequest>().ReverseMap();
+            CreateMap<Database.Entities.Product, GrocerioModels.Product.Product>().ReverseMap();
         }
 
     }
