@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using GrocerioApi.Database.Context;
-using GrocerioApi.Enums;
+using GrocerioModels.Enums.User;
 using GrocerioModels.Login;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

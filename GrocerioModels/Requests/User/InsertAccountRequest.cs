@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Json.Serialization;
+using GrocerioModels.Enums.User;
 
 namespace GrocerioModels.Requests.User
 {
@@ -26,11 +27,5 @@ namespace GrocerioModels.Requests.User
 
         [JsonIgnore]
         public Role Role { get; set; }
-    }
-
-    public enum Role
-    {
-        Admin, 
-        User
     }
 }

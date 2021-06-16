@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GrocerioModels.Enums.User;
 using GrocerioModels.Requests.User;
 
 namespace GrocerioModels.Users

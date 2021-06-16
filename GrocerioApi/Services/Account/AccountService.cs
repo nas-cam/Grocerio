@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GrocerioApi.Database.Context;
 using GrocerioApi.Exceptions;
+using GrocerioModels.Enums.User;
 using GrocerioModels.Requests.User;
 using Microsoft.OpenApi.Models;
-using Role = GrocerioApi.Enums.Role;
 
 namespace GrocerioApi.Services.Account
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GrocerioApi.Enums;
+using GrocerioModels.Enums.User;
 
 namespace GrocerioApi.Database.Entities
 {

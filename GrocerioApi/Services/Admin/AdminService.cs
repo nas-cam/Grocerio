@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GrocerioApi.Database.Context;
 using GrocerioApi.Services.Account;
+using GrocerioModels.Enums.User;
 using GrocerioModels.Requests.User;
 
 namespace GrocerioApi.Services.Admin
