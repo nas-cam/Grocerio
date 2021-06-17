@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GrocerioModels.Product
 {
-    public class MissingProduct
+    public class MinifiedProduct
     {
         public int Id { get; set; }
         public string Name { get; set; }

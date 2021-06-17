@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GrocerioApi.Database.Context;
 using GrocerioApi.Database.Entities;
+using GrocerioModels.Product;
 using GrocerioModels.Requests.Store;
+using GrocerioModels.Response.Store;
 using GrocerioModels.Utils;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 
@@ -105,7 +107,7 @@ namespace GrocerioApi.Services.Store
             return response;
         }
 
-        public List<GrocerioModels.Product.MissingProduct> GetMissingProducts(int storeId)
+        public List<GrocerioModels.Product.MinifiedProduct> GetMissingProducts(int storeId)
         {
             //validate store id
             var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
@@ -126,7 +128,70 @@ namespace GrocerioApi.Services.Store
                 if (!insertedProductIds.Contains(product.Id))
                     missingProducts.Add(product);
 
-            return _mapper.Map<List<GrocerioModels.Product.MissingProduct>>(missingProducts);
+            return _mapper.Map<List<GrocerioModels.Product.MinifiedProduct>>(missingProducts);
+        }
+
+        public ProductManipulationResponse AddProduct(int storeId, ProductManipulationRequest request)
+        {
+
+            //prepare response
+            var response = new ProductManipulationResponse() { Success = false, ProductList = new List<MinifiedProduct>()};
+
+            //validate store id
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
+            if (store == null)
+            {
+                response.Message = $"Invalid store id: {storeId}";
+                return response;
+            }
+
+            //check if store has at least one product
+            var validStoreProduct = _context.StoreProducts.Select(x => new { x.Id, x.StoreId }).FirstOrDefault(sp => sp.StoreId == storeId);
+            if (validStoreProduct == null)
+            {
+                response.Message = "The store must have at least one product registered";
+                return response;
+            }
+
+            //get already registered products
+            var registeredProductIds =
+                _context.StoreProducts.Where(sp => sp.StoreId == storeId).Select(x => x.ProductId).ToList();
+
+            //add in new products
+            var products = _context.Products
+                .Select(x => new {x.Name, x.CategoryId, x.Description, x.Id, x.ImageLink, x.ProductType}).ToList();
+
+            foreach (var product in request.Products)
+            {
+                if (!registeredProductIds.Contains(product.ProductId))
+                {
+                    _context.StoreProducts.Add(new StoreProducts()
+                    {
+                        ProductId = product.ProductId, 
+                        StoreId =  storeId, 
+                        Price = product.Price,
+                        Registered = Get.CurrentDate(),
+                    });
+                    _context.SaveChanges();
+                    var dbProduct = products.Single(p=>p.Id == product.ProductId);
+                    response.ProductList.Add(new MinifiedProduct()
+                    {
+                        Name = dbProduct.Name, 
+                        CategoryId = dbProduct.CategoryId, 
+                        Description = dbProduct.Description,
+                        Id = dbProduct.Id, 
+                        ImageLink = dbProduct.ImageLink, 
+                        ProductType = dbProduct.ProductType
+                    });
+                }
+            }
+
+            response.Success = true;
+            response.Message = "New products added in successfully";
+            response.StoreName = store.Name;
+            response.StoreId = store.Id;
+
+            return response;
         }
     }
 }

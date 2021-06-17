@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GrocerioModels.Requests.Store;
+using GrocerioModels.Response.Store;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GrocerioApi.Services.Store
 {
     public interface IStoreService
     {
         GrocerioModels.Response.Store.InsertStoreResponse Insert(GrocerioModels.Requests.Store.InsertStoreRequest request);
-        List<GrocerioModels.Product.MissingProduct> GetMissingProducts(int storeId);
+        List<GrocerioModels.Product.MinifiedProduct> GetMissingProducts(int storeId);
+        ProductManipulationResponse AddProduct(int storeId, ProductManipulationRequest request);
     }
 }
