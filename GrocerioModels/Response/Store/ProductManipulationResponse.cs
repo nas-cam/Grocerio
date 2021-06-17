@@ -9,6 +9,6 @@ namespace GrocerioModels.Response.Store
     {
         public int StoreId { get; set; }
         public String StoreName { get; set; }
-        public List<MinifiedProduct> ProductList { get; set; }
+        public List<MinifiedProductWithPrice> ProductList { get; set; }
     }
 }

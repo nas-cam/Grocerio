@@ -135,13 +135,20 @@ namespace GrocerioApi.Services.Store
         {
 
             //prepare response
-            var response = new ProductManipulationResponse() { Success = false, ProductList = new List<MinifiedProduct>()};
+            var response = new ProductManipulationResponse() { Success = false, ProductList = new List<MinifiedProductWithPrice>()};
 
             //validate store id
             var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
             if (store == null)
             {
                 response.Message = $"Invalid store id: {storeId}";
+                return response;
+            }
+
+            //check if request is empty
+            if (request.Products.Count == 0)
+            {
+                response.Message = "No products are received from the request";
                 return response;
             }
 
@@ -163,6 +170,11 @@ namespace GrocerioApi.Services.Store
 
             foreach (var product in request.Products)
             {
+                if (products.Where(p => p.Id == product.ProductId).ToList().Count == 0)
+                {
+                    response.Message = $"Invalid product id: {product.ProductId}";
+                    return response;
+                }
                 if (!registeredProductIds.Contains(product.ProductId))
                 {
                     _context.StoreProducts.Add(new StoreProducts()
@@ -174,16 +186,23 @@ namespace GrocerioApi.Services.Store
                     });
                     _context.SaveChanges();
                     var dbProduct = products.Single(p=>p.Id == product.ProductId);
-                    response.ProductList.Add(new MinifiedProduct()
+                    response.ProductList.Add(new MinifiedProductWithPrice()
                     {
                         Name = dbProduct.Name, 
                         CategoryId = dbProduct.CategoryId, 
                         Description = dbProduct.Description,
                         Id = dbProduct.Id, 
                         ImageLink = dbProduct.ImageLink, 
-                        ProductType = dbProduct.ProductType
+                        ProductType = dbProduct.ProductType, 
+                        Price =  product.Price
                     });
                 }
+            }
+
+            if (response.ProductList.Count == 0)
+            {
+                response.Message = "The wanted products are already inside the store";
+                return response;
             }
 
             response.Success = true;
