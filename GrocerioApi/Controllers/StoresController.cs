@@ -61,5 +61,25 @@ namespace GrocerioApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet("GetStoreCategories/{storeId}/{missing}")]
+        [Authorize]
+        public ActionResult<List<GrocerioModels.Category.Category>> GetStoreCategories(int storeId, bool missing = false)
+        {
+            var response = _storeService.GetStoreCategories(storeId, missing);
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid store id" });
+            return Ok(response);
+        }
+
+        [HttpGet("GetStoreById/{storeId}")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<GrocerioModels.Store.Model.StoreModel> GetStoreById(int storeId)
+        {
+            var response = _storeService.GetStoreById(storeId);
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid store id" });
+            return Ok(response);
+        }
+
+
+
     }
 }

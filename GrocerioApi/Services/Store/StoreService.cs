@@ -11,6 +11,7 @@ using GrocerioModels.Requests.Store;
 using GrocerioModels.Response.Store;
 using GrocerioModels.Utils;
 using Microsoft.AspNetCore.DataProtection.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace GrocerioApi.Services.Store
 {
@@ -25,6 +26,7 @@ namespace GrocerioApi.Services.Store
             _mapper = mapper;
         }
 
+        #region PrvateMethods
         private ProductManipulationResponse ValidateStoreInformation(int storeId)
         {
             //prepare response
@@ -77,6 +79,49 @@ namespace GrocerioApi.Services.Store
                 Price = price
             };
         }
+
+        private GrocerioModels.Store.Model.StoreModel CreateStoreModel(int storeId)
+        {
+            //get database store
+            var dbStore = _context.Stores.Include(s => s.StoreProducts).ThenInclude(sp => sp.Product).ThenInclude(p=>p.Category).Single(s => s.Id == storeId);
+            var store = new GrocerioModels.Store.Model.StoreModel()
+            {
+                Id = dbStore.Id, 
+                Address = dbStore.Address, 
+                UniqueStoreNumber = dbStore.UniqueStoreNumber, 
+                Description = dbStore.Description, 
+                ImageLink = dbStore.ImageLink, 
+                Membership = dbStore.Membership, 
+                MembershipName = dbStore.Membership.ToString(), 
+                Name = dbStore.Name, 
+                Categories = GetStoreCategories(storeId, false), 
+                MissingCategories = GetStoreCategories(storeId, true),
+                StoreProducts = new List<GrocerioModels.Store.Model.StoreProductModel>()
+            };
+
+            foreach(var storeProduct in dbStore.StoreProducts)
+                store.StoreProducts.Add(new GrocerioModels.Store.Model.StoreProductModel()
+                {
+                    Price = storeProduct.Price,
+                    Registered = storeProduct.Registered,
+                    StoreProductId = storeProduct.Id,
+                    Product = new GrocerioModels.Store.Model.ProductModel()
+                    {
+                        Id = storeProduct.Product.Id,
+                        CategoryId = storeProduct.Product.CategoryId,
+                        CategoryName = storeProduct.Product.Category.Name.ToString(),
+                        Description = storeProduct.Product.Description,
+                        ImageLink = storeProduct.Product.ImageLink,
+                        Name = storeProduct.Product.Name,
+                        ProductType = storeProduct.Product.ProductType,
+                        ProductTypeName = storeProduct.Product.ProductType.ToString()
+                    }
+                }
+                );
+
+            return store;
+        }
+        #endregion
 
         public GrocerioModels.Response.Store.InsertStoreResponse Insert(InsertStoreRequest request)
         {
@@ -293,6 +338,52 @@ namespace GrocerioApi.Services.Store
             response.StoreId = store.Id;
 
             return response;
+        }
+
+        public List<GrocerioModels.Category.Category> GetStoreCategories(int storeId, bool missing)
+        {
+            //validate store id
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
+            if (store == null) return null;
+
+            switch (missing)
+            {
+                case true:
+                    List<Database.Entities.Category> allStoreCategories =
+                        _context.StoreProducts
+                        .Include(sp => sp.Product)
+                        .ThenInclude(p => p.Category)
+                        .Where(sp => sp.StoreId == storeId)
+                        .Select(sp => sp.Product.Category)
+                        .Distinct()
+                        .ToList();
+
+                    var allDatabaseCategories = _context.Categories.ToList();
+                    var missingCategories = new List<Database.Entities.Category>();
+
+                    foreach (var category in allDatabaseCategories)
+                        if (!allStoreCategories.Contains(category)) missingCategories.Add(category);
+
+                    return _mapper.Map<List<GrocerioModels.Category.Category>>(missingCategories);
+
+                case false:
+                    return _mapper.Map<List<GrocerioModels.Category.Category>>(
+                        _context.StoreProducts
+                        .Include(sp => sp.Product)
+                        .ThenInclude(p => p.Category)
+                        .Where(sp => sp.StoreId == storeId)
+                        .Select(sp => sp.Product.Category)
+                        .Distinct()
+                        .ToList());
+            }
+        }
+
+        public GrocerioModels.Store.Model.StoreModel GetStoreById(int storeId)
+        {
+            //validate store id
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
+            if (store == null) return null;
+            return CreateStoreModel(storeId);
         }
     }
 }

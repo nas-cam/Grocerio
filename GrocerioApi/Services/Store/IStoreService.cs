@@ -14,5 +14,7 @@ namespace GrocerioApi.Services.Store
         List<GrocerioModels.Product.MinifiedProduct> GetMissingProducts(int storeId);
         ProductManipulationResponse AddProduct(int storeId, ProductManipulationRequest request);
         ProductManipulationResponse RemoveProduct(int storeId, ProductRemovalRequest request);
+        List<GrocerioModels.Category.Category> GetStoreCategories(int storeId, bool missing);
+        GrocerioModels.Store.Model.StoreModel GetStoreById(int storeId);
     }
 }
