@@ -9,6 +9,7 @@ using GrocerioModels.Requests.Store;
 using GrocerioModels.Response;
 using GrocerioModels.Response.Store;
 using Microsoft.AspNetCore.Authorization;
+using GrocerioModels.Filters.Store;
 
 namespace GrocerioApi.Controllers
 {
@@ -30,7 +31,7 @@ namespace GrocerioApi.Controllers
         {
 
             var response = _storeService.Insert(request);
-            if (!response.Success) return BadRequest(new StringResponse() {Message = response.Message});
+            if (!response.Success) return BadRequest(new StringResponse() { Message = response.Message });
             return Ok(response);
         }
 
@@ -39,7 +40,7 @@ namespace GrocerioApi.Controllers
         public ActionResult<List<GrocerioModels.Product.MinifiedProduct>> GetMissingProducts(int storeId)
         {
             var response = _storeService.GetMissingProducts(storeId);
-            if (response == null) return NotFound(new StringResponse() {Message = "Invalid store id"});
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid store id" });
             return Ok(response);
         }
 
@@ -79,7 +80,13 @@ namespace GrocerioApi.Controllers
             return Ok(response);
         }
 
-
-
+        [HttpPost("ReceiveStores")]
+        [Authorize]
+        public ActionResult<List<GrocerioModels.Store.Model.StoreModel>> ReceiveStores([FromBody] StoreFilters storeFilters)
+        {
+            var response = _storeService.ReceiveStores(storeFilters);
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid user id" });
+            return Ok(response);
+        }
     }
 }

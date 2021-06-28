@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GrocerioApi.Database.Context;
 using GrocerioApi.Database.Entities;
+using GrocerioModels.Filters.Store;
 using GrocerioModels.Product;
 using GrocerioModels.Requests.Store;
 using GrocerioModels.Response.Store;
@@ -384,6 +385,41 @@ namespace GrocerioApi.Services.Store
             var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
             if (store == null) return null;
             return CreateStoreModel(storeId);
+        }
+
+        public List<GrocerioModels.Store.Model.StoreModel> ReceiveStores(StoreFilters storeFilters)
+        {
+            //get and validate user
+            var account = _context.Accounts
+                .Select(x => new { x.AccountId, x.Username })
+                .SingleOrDefault(a => a.AccountId == storeFilters.AccountId);
+            if (account == null) return null;
+
+            //get all store data from database as a query
+            var allStoresQuery = _context.Stores
+                .Include(s => s.StoreProducts)
+                .ThenInclude(sp => sp.Product)
+                .ThenInclude(p => p.Category)
+                .AsQueryable();
+
+            #region Filtering
+
+            //filter stores
+            var searchTerm = storeFilters.SearchTerm.ToLower(); //lower the search term
+            if (!string.IsNullOrWhiteSpace(storeFilters.SearchTerm))
+                allStoresQuery = allStoresQuery
+                    .Where(s => s.Name.ToLower().Contains(searchTerm) ||
+                                s.Description.ToLower().Contains(searchTerm) ||
+                                s.Address.ToLower().Contains(searchTerm));
+
+            if (storeFilters.Membership != 0)
+                allStoresQuery = allStoresQuery.Where(s => s.Membership == storeFilters.Membership);
+
+            #endregion
+
+
+
+           throw new NotImplementedException();
         }
     }
 }

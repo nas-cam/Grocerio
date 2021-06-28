@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GrocerioModels.Filters.Store;
 using GrocerioModels.Requests.Store;
 using GrocerioModels.Response.Store;
 using Microsoft.AspNetCore.Mvc;
@@ -16,5 +17,6 @@ namespace GrocerioApi.Services.Store
         ProductManipulationResponse RemoveProduct(int storeId, ProductRemovalRequest request);
         List<GrocerioModels.Category.Category> GetStoreCategories(int storeId, bool missing);
         GrocerioModels.Store.Model.StoreModel GetStoreById(int storeId);
+        List<GrocerioModels.Store.Model.StoreModel> ReceiveStores(StoreFilters storeFilters);
     }
 }
