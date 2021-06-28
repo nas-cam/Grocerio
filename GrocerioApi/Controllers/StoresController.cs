@@ -52,5 +52,14 @@ namespace GrocerioApi.Controllers
             return Ok(response);
         }
 
+        [HttpPost("RemoveProduct/{storeId}")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<ProductManipulationResponse> RemoveProduct(int storeId, [FromBody] ProductRemovalRequest request)
+        {
+            var response = _storeService.RemoveProduct(storeId, request);
+            if (!response.Success) return BadRequest(new StringResponse() { Message = response.Message });
+            return Ok(response);
+        }
+
     }
 }

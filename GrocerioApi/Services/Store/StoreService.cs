@@ -25,6 +25,59 @@ namespace GrocerioApi.Services.Store
             _mapper = mapper;
         }
 
+        private ProductManipulationResponse ValidateStoreInformation(int storeId)
+        {
+            //prepare response
+            var response = new ProductManipulationResponse() { Success = false, ProductList = new List<MinifiedProductWithPrice>(), Message = "" };
+
+            //validate store id
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
+            if (store == null)
+            {
+                response.Message = $"Invalid store id: {storeId}";
+                return response;
+            }
+
+            //check if store has at least one product
+            var validStoreProduct = _context.StoreProducts.Select(x => new { x.Id, x.StoreId }).FirstOrDefault(sp => sp.StoreId == storeId);
+            if (validStoreProduct == null)
+            {
+                response.Message = "The store must have at least one product registered";
+                return response;
+            }
+            return response;
+        }
+
+        private List<MinifiedProduct> GetMinifiedProductsFromDatabase()
+        {
+            return _context.Products
+               .Select(x => new MinifiedProduct
+               {
+                   Name = x.Name,
+                   CategoryId = x.CategoryId,
+                   Description = x.Description,
+                   Id = x.Id,
+                   ImageLink = x.ImageLink,
+                   ProductType = x.ProductType
+               }).ToList();
+        }
+
+        private MinifiedProductWithPrice CreateMinifiedProductWithPrice(int productId, double price, List<MinifiedProduct> products)
+        {
+
+            var dbProduct = products.Single(p => p.Id == productId);
+            return new MinifiedProductWithPrice()
+            {
+                Name = dbProduct.Name,
+                CategoryId = dbProduct.CategoryId,
+                Description = dbProduct.Description,
+                Id = dbProduct.Id,
+                ImageLink = dbProduct.ImageLink,
+                ProductType = dbProduct.ProductType,
+                Price = price
+            };
+        }
+
         public GrocerioModels.Response.Store.InsertStoreResponse Insert(InsertStoreRequest request)
         {
 
@@ -133,17 +186,9 @@ namespace GrocerioApi.Services.Store
 
         public ProductManipulationResponse AddProduct(int storeId, ProductManipulationRequest request)
         {
-
-            //prepare response
-            var response = new ProductManipulationResponse() { Success = false, ProductList = new List<MinifiedProductWithPrice>()};
-
-            //validate store id
-            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
-            if (store == null)
-            {
-                response.Message = $"Invalid store id: {storeId}";
-                return response;
-            }
+            //validate store
+            var response = ValidateStoreInformation(storeId);
+            if (!string.IsNullOrWhiteSpace(response.Message)) return response;
 
             //check if request is empty
             if (request.Products.Count == 0)
@@ -152,27 +197,24 @@ namespace GrocerioApi.Services.Store
                 return response;
             }
 
-            //check if store has at least one product
-            var validStoreProduct = _context.StoreProducts.Select(x => new { x.Id, x.StoreId }).FirstOrDefault(sp => sp.StoreId == storeId);
-            if (validStoreProduct == null)
-            {
-                response.Message = "The store must have at least one product registered";
-                return response;
-            }
-
             //get already registered products
             var registeredProductIds =
                 _context.StoreProducts.Where(sp => sp.StoreId == storeId).Select(x => x.ProductId).ToList();
 
-            //add in new products
-            var products = _context.Products
-                .Select(x => new {x.Name, x.CategoryId, x.Description, x.Id, x.ImageLink, x.ProductType}).ToList();
+            //get all products from database
+            var products = GetMinifiedProductsFromDatabase();
 
+            //add in new products
             foreach (var product in request.Products)
             {
                 if (products.Where(p => p.Id == product.ProductId).ToList().Count == 0)
                 {
                     response.Message = $"Invalid product id: {product.ProductId}";
+                    return response;
+                }
+                if(product.Price == 0)
+                {
+                    response.Message = $"The price for product with the id {product.ProductId} is set to 0";
                     return response;
                 }
                 if (!registeredProductIds.Contains(product.ProductId))
@@ -185,17 +227,7 @@ namespace GrocerioApi.Services.Store
                         Registered = Get.CurrentDate(),
                     });
                     _context.SaveChanges();
-                    var dbProduct = products.Single(p=>p.Id == product.ProductId);
-                    response.ProductList.Add(new MinifiedProductWithPrice()
-                    {
-                        Name = dbProduct.Name, 
-                        CategoryId = dbProduct.CategoryId, 
-                        Description = dbProduct.Description,
-                        Id = dbProduct.Id, 
-                        ImageLink = dbProduct.ImageLink, 
-                        ProductType = dbProduct.ProductType, 
-                        Price =  product.Price
-                    });
+                    response.ProductList.Add(CreateMinifiedProductWithPrice(product.ProductId, product.Price, products));
                 }
             }
 
@@ -206,7 +238,57 @@ namespace GrocerioApi.Services.Store
             }
 
             response.Success = true;
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
             response.Message = "New products added in successfully";
+            response.StoreName = store.Name;
+            response.StoreId = store.Id;
+
+            return response;
+        }
+
+        public ProductManipulationResponse RemoveProduct(int storeId, ProductRemovalRequest request)
+        {
+            //validate store
+            var response = ValidateStoreInformation(storeId);
+            if (!string.IsNullOrWhiteSpace(response.Message)) return response;
+
+            //check if request is empty
+            if (request.ProductIds.Count == 0)
+            {
+                response.Message = "No products are received from the request";
+                return response;
+            }
+
+            //get already registered products
+            var registeredProducts =
+                _context.StoreProducts.Where(sp => sp.StoreId == storeId).ToList();
+
+            if(registeredProducts.Count == 1)
+            {
+                response.Message = $"The store must have at least one product left, the current one has the id: {registeredProducts[0].ProductId}";
+                return response;
+            }
+
+            //get all products from database
+            var products = GetMinifiedProductsFromDatabase();
+
+            //remove products from store
+            foreach (var productId in request.ProductIds)
+            {
+                var productToRemove = registeredProducts.SingleOrDefault(rp => rp.ProductId == productId);
+                if(productToRemove == null)
+                {
+                    response.Message = $"Invalid product id: {productId}";
+                    return response;
+                }
+                _context.StoreProducts.Remove(productToRemove);
+                _context.SaveChanges();
+                response.ProductList.Add(CreateMinifiedProductWithPrice(productId, productToRemove.Price, products));               
+            }
+
+            response.Success = true;
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
+            response.Message = "Products removed successfully";
             response.StoreName = store.Name;
             response.StoreId = store.Id;
 

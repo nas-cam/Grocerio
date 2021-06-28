@@ -8,7 +8,7 @@ namespace GrocerioModels.Response.Store
     public class ProductManipulationResponse : BoolResponse
     {
         public int StoreId { get; set; }
-        public String StoreName { get; set; }
+        public string StoreName { get; set; }
         public List<MinifiedProductWithPrice> ProductList { get; set; }
     }
 }

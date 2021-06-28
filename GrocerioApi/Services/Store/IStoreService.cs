@@ -13,5 +13,6 @@ namespace GrocerioApi.Services.Store
         GrocerioModels.Response.Store.InsertStoreResponse Insert(GrocerioModels.Requests.Store.InsertStoreRequest request);
         List<GrocerioModels.Product.MinifiedProduct> GetMissingProducts(int storeId);
         ProductManipulationResponse AddProduct(int storeId, ProductManipulationRequest request);
+        ProductManipulationResponse RemoveProduct(int storeId, ProductRemovalRequest request);
     }
 }
