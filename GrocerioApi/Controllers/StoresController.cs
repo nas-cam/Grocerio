@@ -85,7 +85,7 @@ namespace GrocerioApi.Controllers
         public ActionResult<List<GrocerioModels.Store.Model.StoreModel>> ReceiveStores([FromBody] StoreFilters storeFilters)
         {
             var response = _storeService.ReceiveStores(storeFilters);
-            if (response == null) return NotFound(new StringResponse() { Message = "Invalid user id" });
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid account id" });
             return Ok(response);
         }
     }

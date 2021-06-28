@@ -13,6 +13,7 @@ using GrocerioModels.Response.Store;
 using GrocerioModels.Utils;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace GrocerioApi.Services.Store
 {
@@ -81,10 +82,10 @@ namespace GrocerioApi.Services.Store
             };
         }
 
-        private GrocerioModels.Store.Model.StoreModel CreateStoreModel(int storeId)
+        private GrocerioModels.Store.Model.StoreModel CreateStoreModel(int storeId, Database.Entities.Store storeObject = null)
         {
             //get database store
-            var dbStore = _context.Stores.Include(s => s.StoreProducts).ThenInclude(sp => sp.Product).ThenInclude(p=>p.Category).Single(s => s.Id == storeId);
+            var dbStore = storeObject != null ? storeObject : _context.Stores.Include(s => s.StoreProducts).ThenInclude(sp => sp.Product).ThenInclude(p=>p.Category).Single(s => s.Id == storeId);
             var store = new GrocerioModels.Store.Model.StoreModel()
             {
                 Id = dbStore.Id, 
@@ -391,7 +392,7 @@ namespace GrocerioApi.Services.Store
         {
             //get and validate user
             var account = _context.Accounts
-                .Select(x => new { x.AccountId, x.Username })
+                .Select(x => new { x.AccountId, x.Username, x.Role })
                 .SingleOrDefault(a => a.AccountId == storeFilters.AccountId);
             if (account == null) return null;
 
@@ -402,24 +403,75 @@ namespace GrocerioApi.Services.Store
                 .ThenInclude(p => p.Category)
                 .AsQueryable();
 
-            #region Filtering
-
-            //filter stores
-            var searchTerm = storeFilters.SearchTerm.ToLower(); //lower the search term
+            #region RequestFiltering
+        
+            //filter by search term
             if (!string.IsNullOrWhiteSpace(storeFilters.SearchTerm))
+            {
+                var searchTerm = storeFilters.SearchTerm.ToLower(); //lower the search term
                 allStoresQuery = allStoresQuery
                     .Where(s => s.Name.ToLower().Contains(searchTerm) ||
                                 s.Description.ToLower().Contains(searchTerm) ||
                                 s.Address.ToLower().Contains(searchTerm));
+            }
 
+            //filter by membership
             if (storeFilters.Membership != 0)
                 allStoresQuery = allStoresQuery.Where(s => s.Membership == storeFilters.Membership);
 
+            //filter by available categories
+            if (storeFilters.CetgoryIds.Count != 0)
+            {
+                List<Database.Entities.Store> tempStores = new List<Database.Entities.Store>();
+                foreach(var store in allStoresQuery.ToList())
+                {
+                    foreach(var storeProduct in store.StoreProducts)
+                    {
+                        if (storeFilters.CetgoryIds.Contains(storeProduct.Product.CategoryId))
+                        {
+                            tempStores.Add(store);
+                            break;
+                        }
+                    }
+                }
+                allStoresQuery = tempStores.AsQueryable();
+            }
+
+            //filter by available product types
+            if (storeFilters.Types.Count != 0)
+            {
+                List<Database.Entities.Store> tempStores = new List<Database.Entities.Store>();
+                foreach (var store in allStoresQuery.ToList())
+                {
+                    foreach (var storeProduct in store.StoreProducts)
+                    {
+                        if (storeFilters.Types.Contains(storeProduct.Product.ProductType))
+                        {
+                            tempStores.Add(store);
+                            break;
+                        }
+                    }
+                }
+                allStoresQuery = tempStores.AsQueryable();
+            }
             #endregion
 
+            //convert filtered database stores into store models
+            var stores = new List<GrocerioModels.Store.Model.StoreModel>();
+            foreach (var store in allStoresQuery.ToList()) stores.Add(CreateStoreModel(store.Id, store));
 
+            #region ContentBasedFiltering
+            if(account.Role == GrocerioModels.Enums.User.Role.User)
+            {
+                /*
+                 If the user that requests the list of stores is a consumer and not an admin,
+                 pull the "stores" data trough content based filtering (CBS), around stores the
+                 user has frequetly shoped in (based on tables like the cart, completed purchases etc.)
+                */
+            }
+            #endregion
 
-           throw new NotImplementedException();
+            return stores;
         }
     }
 }
