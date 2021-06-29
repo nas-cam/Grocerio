@@ -18,6 +18,8 @@ namespace GrocerioModels.Store.Model
         public List<StoreProductModel> StoreProducts { get; set; }
         public List<GrocerioModels.Category.Category> Categories { get; set; }
         public List<GrocerioModels.Category.Category> MissingCategories { get; set; }
+        public List<GrocerioModels.Product.ProructTypeItem> ProductTypes { get; set; }
+        public List<GrocerioModels.Product.ProructTypeItem> MissingProductTypes { get; set; }
 
     }
 }

@@ -98,6 +98,8 @@ namespace GrocerioApi.Services.Store
                 Name = dbStore.Name, 
                 Categories = GetStoreCategories(storeId, false), 
                 MissingCategories = GetStoreCategories(storeId, true),
+                ProductTypes = GetStoreProductTypes(storeId, false), 
+                MissingProductTypes = GetStoreProductTypes(storeId, true),
                 StoreProducts = new List<GrocerioModels.Store.Model.StoreProductModel>()
             };
 
@@ -377,6 +379,45 @@ namespace GrocerioApi.Services.Store
                         .Select(sp => sp.Product.Category)
                         .Distinct()
                         .ToList());
+            }
+        }
+
+        public List<ProructTypeItem> GetStoreProductTypes(int storeId, bool missing)
+        {
+            //validate store id
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == storeId);
+            if (store == null) return null;
+
+            //get all product types for the store
+            var allStoreTypes = _context.StoreProducts
+                                              .Include(sp => sp.Product)
+                                              .Where(sp => sp.StoreId == storeId)
+                                              .Select(sp => sp.Product.ProductType)
+                                              .ToList();
+            switch (missing)
+            {
+                case true:                  
+                    var missingProductTypes = new List<ProructTypeItem>();
+                    foreach (GrocerioModels.Enums.Product.Type type in (GrocerioModels.Enums.Product.Type[])Enum.GetValues(typeof(GrocerioModels.Enums.Product.Type)))
+                    {
+                        if (!allStoreTypes.Contains(type))
+                            missingProductTypes.Add(new ProructTypeItem()
+                            {
+                                Type = type,
+                                TypeName = type.ToString()
+                            });
+                    }
+                    return missingProductTypes;
+
+                case false:
+                    var storeProductTypes = new List<ProructTypeItem>();
+                    foreach(var storeType in allStoreTypes.Distinct().ToList())
+                        storeProductTypes.Add(new ProructTypeItem()
+                        {
+                            Type = storeType, 
+                            TypeName = storeType.ToString()
+                        });
+                    return storeProductTypes;
             }
         }
 

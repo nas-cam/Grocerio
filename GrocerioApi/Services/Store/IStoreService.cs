@@ -16,6 +16,7 @@ namespace GrocerioApi.Services.Store
         ProductManipulationResponse AddProduct(int storeId, ProductManipulationRequest request);
         ProductManipulationResponse RemoveProduct(int storeId, ProductRemovalRequest request);
         List<GrocerioModels.Category.Category> GetStoreCategories(int storeId, bool missing);
+        List<GrocerioModels.Product.ProructTypeItem> GetStoreProductTypes(int storeId, bool missing);
         GrocerioModels.Store.Model.StoreModel GetStoreById(int storeId);
         List<GrocerioModels.Store.Model.StoreModel> ReceiveStores(StoreFilters storeFilters);
         List<GrocerioModels.Store.Model.StoreProductModel> ReceiveStoreProducts(ProductFilters productFilters);

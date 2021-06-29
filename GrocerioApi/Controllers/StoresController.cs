@@ -10,6 +10,7 @@ using GrocerioModels.Response;
 using GrocerioModels.Response.Store;
 using Microsoft.AspNetCore.Authorization;
 using GrocerioModels.Filters.Store;
+using GrocerioModels.Product;
 
 namespace GrocerioApi.Controllers
 {
@@ -67,6 +68,15 @@ namespace GrocerioApi.Controllers
         public ActionResult<List<GrocerioModels.Category.Category>> GetStoreCategories(int storeId, bool missing = false)
         {
             var response = _storeService.GetStoreCategories(storeId, missing);
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid store id" });
+            return Ok(response);
+        }
+
+        [HttpGet("GetStoreProductTypes/{storeId}/{missing}")]
+        [Authorize]
+        public ActionResult<List<GrocerioModels.Product.ProructTypeItem>> GetStoreProductTypes(int storeId, bool missing = false)
+        {
+            var response = _storeService.GetStoreProductTypes(storeId, missing);
             if (response == null) return NotFound(new StringResponse() { Message = "Invalid store id" });
             return Ok(response);
         }
