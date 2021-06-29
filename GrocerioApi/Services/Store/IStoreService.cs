@@ -18,5 +18,6 @@ namespace GrocerioApi.Services.Store
         List<GrocerioModels.Category.Category> GetStoreCategories(int storeId, bool missing);
         GrocerioModels.Store.Model.StoreModel GetStoreById(int storeId);
         List<GrocerioModels.Store.Model.StoreModel> ReceiveStores(StoreFilters storeFilters);
+        List<GrocerioModels.Store.Model.StoreProductModel> ReceiveStoreProducts(ProductFilters productFilters);
     }
 }

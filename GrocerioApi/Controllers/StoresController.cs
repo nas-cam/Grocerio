@@ -88,5 +88,14 @@ namespace GrocerioApi.Controllers
             if (response == null) return NotFound(new StringResponse() { Message = "Invalid account id" });
             return Ok(response);
         }
+
+        [HttpPost("ReceiveStoreProducts")]
+        [Authorize]
+        public ActionResult<List<GrocerioModels.Store.Model.StoreProductModel>> ReceiveStoreProducts([FromBody] ProductFilters productFilters)
+        {
+            var response = _storeService.ReceiveStoreProducts(productFilters);
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid identifiers" });
+            return Ok(response);
+        }
     }
 }

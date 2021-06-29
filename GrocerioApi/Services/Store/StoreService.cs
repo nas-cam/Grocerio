@@ -473,5 +473,82 @@ namespace GrocerioApi.Services.Store
 
             return stores;
         }
+
+        public List<GrocerioModels.Store.Model.StoreProductModel> ReceiveStoreProducts(ProductFilters productFilters)
+        {
+
+            //get and validate user
+            var account = _context.Accounts
+                .Select(x => new { x.AccountId, x.Username, x.Role })
+                .SingleOrDefault(a => a.AccountId == productFilters.AccountId);
+            if (account == null) return null;
+
+            //validate store id
+            var store = _context.Stores.Select(x => new { x.Id, x.Name }).SingleOrDefault(s => s.Id == productFilters.StoreId);
+            if (store == null) return null;
+
+            //get all product data from database
+            var allProductsQuery = _context.StoreProducts
+                                                .Include(sp => sp.Product)
+                                                .ThenInclude(p=>p.Category)
+                                                .Where(sp => sp.StoreId == store.Id)
+                                                .AsQueryable();
+
+            #region RequestFiltering
+
+            //filter by search term
+            if (!string.IsNullOrWhiteSpace(productFilters.SearchTerm))
+            {
+                var searchTerm = productFilters.SearchTerm.ToLower(); //lower the search term
+                allProductsQuery = allProductsQuery
+                    .Where(p => p.Product.Name.ToLower().Contains(searchTerm) ||
+                                p.Product.Description.ToLower().Contains(searchTerm));
+            }
+
+            //filter by available categories
+            if (productFilters.CetgoryIds.Count != 0)
+                allProductsQuery = allProductsQuery.Where(p => productFilters.CetgoryIds.Contains(p.Product.CategoryId));
+
+            //filter by available product types
+            if (productFilters.Types.Count != 0)
+                allProductsQuery = allProductsQuery.Where(p => productFilters.Types.Contains(p.Product.ProductType));
+            #endregion
+
+            var products = new List<GrocerioModels.Store.Model.StoreProductModel>();
+            foreach(var product in allProductsQuery.ToList())
+            {
+                products.Add(new GrocerioModels.Store.Model.StoreProductModel()
+                {
+                    Price = product.Price, 
+                    Registered = product.Registered, 
+                    StoreProductId =product.Id, 
+                    Product = new GrocerioModels.Store.Model.ProductModel()
+                    {
+                        Id = product.Product.Id, 
+                        CategoryId = product.Product.CategoryId, 
+                        CategoryName = product.Product.Category.Name.ToString(), 
+                        Name = product.Product.Name, 
+                        Description = product.Product.Description, 
+                        ImageLink = product.Product.ImageLink, 
+                        ProductType = product.Product.ProductType, 
+                        ProductTypeName = product.Product.ProductType.ToString()
+                    }
+                });
+            }
+
+            #region ContentBasedFiltering
+            if (account.Role == GrocerioModels.Enums.User.Role.User)
+            {
+                /*
+                 If the user that requests the list of products is a consumer and not an admin,
+                 pull the "products" data trough content based filtering (CBS), around products the
+                 user has frequetly shoped for (based on tables like the cart, completed purchases etc.)
+                */
+            }
+            #endregion
+
+
+            return products;
+        }
     }
 }
