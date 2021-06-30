@@ -1,5 +1,6 @@
 ﻿using GrocerioApi.Database.Context;
 using GrocerioModels.Response;
+using GrocerioModels.ShoppingCart;
 using GrocerioModels.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,7 +33,7 @@ namespace GrocerioApi.Services.ShoppingCart
             var storeProduct = _context.StoreProducts.SingleOrDefault(sp => sp.Id == storeProductId);
             if(storeProduct == null)
             {
-                response.Message = "Invalid stpre product id";
+                response.Message = "Invalid store product id";
                 return response;
             }
             #endregion
@@ -74,6 +75,79 @@ namespace GrocerioApi.Services.ShoppingCart
             }
 
             _context.SaveChanges();
+            return response;
+        }
+
+        public ShoppingCartModel GetShoppingCart(int userId)
+        {
+            //validate user
+            var user = _context.Users.Include(u => u.Account).Select(x => new { Username = x.Account.Username, Id = x.UserId }).SingleOrDefault(u => u.Id == userId);
+            if (user == null) return null;
+            var response = new ShoppingCartModel() { 
+                CheckoutTotal = 0, 
+                Items = new List<ShoppingCartItem>()
+            }; 
+
+            var shoppingCartItems = _context.ShoppingCart
+                                            .Include(c=>c.StoreProduct)
+                                            .ThenInclude(sp=>sp.Product)
+                                            .Include(c => c.StoreProduct)
+                                            .ThenInclude(sp=>sp.Store)
+                                            .Where(c => c.UserId == userId).ToList();
+            if (shoppingCartItems.Count == 0) return response;
+
+            foreach (var shoppingCartItem in shoppingCartItems)
+            {
+                response.Items.Add(new ShoppingCartItem()
+                {
+                    Store = shoppingCartItem.StoreProduct.Store.Name,
+                    AddedIn = shoppingCartItem.AddedIn,
+                    Amount = shoppingCartItem.Amount,
+                    CartItemId = shoppingCartItem.Id,
+                    Price = shoppingCartItem.StoreProduct.Price,
+                    Product = shoppingCartItem.StoreProduct.Product.Name,
+                    ProductId = shoppingCartItem.StoreProduct.Product.Id,
+                    StoreId = shoppingCartItem.StoreProduct.Store.Id,
+                    StoreProductId = shoppingCartItem.StoreProduct.Id,
+                    Updated = shoppingCartItem.Updated,
+                    UserId = user.Id,
+                    Username = user.Username,
+                    Total = Math.Round(shoppingCartItem.StoreProduct.Price * shoppingCartItem.Amount, 2)
+                });
+                response.CheckoutTotal += Math.Round(shoppingCartItem.StoreProduct.Price * shoppingCartItem.Amount, 2);
+            }
+            return response;
+        }
+
+        public BoolResponse RemoveItem(int cartItemId, int userId)
+        {
+            var response = new BoolResponse() { Success = false };
+
+            #region Validation
+            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId }).SingleOrDefault(u => u.Id == userId);
+            if (user == null){
+                response.Message = "Invalid user id";
+                return response;
+            }
+           
+            var cartItem = _context.ShoppingCart.SingleOrDefault(c => c.Id == cartItemId);
+            if(cartItem == null)
+            {
+                response.Message = "Invalid cart item id";
+                return response;
+            }
+
+            if(cartItem.UserId != userId)
+            {
+                response.Message = "This cart item does not belong to the forwarded user";
+                return response;
+            }
+            #endregion
+
+            _context.ShoppingCart.Remove(cartItem);
+            _context.SaveChanges();
+            response.Success = true;
+            response.Message = "Cart item removed successfully";
             return response;
         }
     }
