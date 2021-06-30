@@ -1,4 +1,5 @@
 ﻿using GrocerioApi.Database.Context;
+using GrocerioModels.Enums.General;
 using GrocerioModels.Response;
 using GrocerioModels.ShoppingCart;
 using GrocerioModels.Utils;
@@ -34,6 +35,11 @@ namespace GrocerioApi.Services.ShoppingCart
             if(storeProduct == null)
             {
                 response.Message = "Invalid store product id";
+                return response;
+            }
+            if (amount == 0)
+            {
+                response.Message = "The amount must be greater than 0";
                 return response;
             }
             #endregion
@@ -150,5 +156,99 @@ namespace GrocerioApi.Services.ShoppingCart
             response.Message = "Cart item removed successfully";
             return response;
         }
+
+        public BoolResponse SlideCartItemAmountByOne(int cartItemId, int userId, Operation operation)
+        {
+            var response = new BoolResponse() { Success = false };
+
+            #region Validation
+            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId }).SingleOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                response.Message = "Invalid user id";
+                return response;
+            }
+
+            var cartItem = _context.ShoppingCart.SingleOrDefault(c => c.Id == cartItemId);
+            if (cartItem == null)
+            {
+                response.Message = "Invalid cart item id";
+                return response;
+            }
+
+            if (cartItem.UserId != userId)
+            {
+                response.Message = "This cart item does not belong to the forwarded user";
+                return response;
+            }
+            #endregion
+
+            switch (operation)
+            {
+                case Operation.Addition:
+                    cartItem.Amount++;
+                    response.Message = "Added one to the cart item";
+                    break;
+                case Operation.Subtraction:
+                    cartItem.Amount--;
+                    response.Message = "Removed one from the cart item";
+                    break;
+            }
+
+            cartItem.Updated = Get.CurrentDate();
+            _context.SaveChanges();
+            response.Success = true;
+            return response;
+        }
+
+        public BoolResponse SlideCartItemAmountByMultiple(int cartItemId, int userId, Operation operation, int amount)
+        {
+            var response = new BoolResponse() { Success = false };
+
+            #region Validation
+            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId }).SingleOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                response.Message = "Invalid user id";
+                return response;
+            }
+
+            var cartItem = _context.ShoppingCart.SingleOrDefault(c => c.Id == cartItemId);
+            if (cartItem == null)
+            {
+                response.Message = "Invalid cart item id";
+                return response;
+            }
+
+            if (cartItem.UserId != userId)
+            {
+                response.Message = "This cart item does not belong to the forwarded user";
+                return response;
+            }
+            if(amount == 0)
+            {
+                response.Message = "The amount must be greater than 0";
+                return response;
+            }
+            #endregion
+
+            switch (operation)
+            {
+                case Operation.Addition:
+                    cartItem.Amount+=amount;
+                    response.Message = $"Added {amount} to the cart item";
+                    break;
+                case Operation.Subtraction:
+                    cartItem.Amount -= amount;
+                    response.Message = $"Removed {amount} from the cart item";
+                    break;
+            }
+
+            cartItem.Updated = Get.CurrentDate();
+            _context.SaveChanges();
+            response.Success = true;
+            return response;
+        }
+
     }
 }

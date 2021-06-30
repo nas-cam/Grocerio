@@ -1,4 +1,5 @@
-﻿using GrocerioModels.Response;
+﻿using GrocerioModels.Enums.General;
+using GrocerioModels.Response;
 using GrocerioModels.ShoppingCart;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,7 @@ namespace GrocerioApi.Services.ShoppingCart
         BoolResponse AddItem(int userId, int storeProductId, int amount);
         ShoppingCartModel GetShoppingCart(int userId);
         BoolResponse RemoveItem(int cartItemId, int userId);
+        BoolResponse SlideCartItemAmountByOne(int cartItemId, int userId, Operation operation);
+        BoolResponse SlideCartItemAmountByMultiple(int cartItemId, int userId, Operation operation, int amount);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GrocerioApi.Services.ShoppingCart;
+using GrocerioModels.Enums.General;
 using GrocerioModels.Response;
 using GrocerioModels.ShoppingCart;
 using Microsoft.AspNetCore.Authorization;
@@ -46,6 +47,24 @@ namespace GrocerioApi.Controllers
         {
             var response = _shoppingCartService.RemoveItem(cartItemId, userId);
             if (!response.Success) return NotFound(new StringResponse() { Message = response.Message });
+            return Ok(new StringResponse() { Message = response.Message });
+        }
+
+        [HttpGet("SlideCartItemAmountByOne/{cartItemId}/{userId}/{operation}")]
+        [Authorize(Roles = "User")]
+        public ActionResult<StringResponse> SlideCartItemAmountByOne(int cartItemId, int userId, Operation operation)
+        {
+            var response = _shoppingCartService.SlideCartItemAmountByOne(cartItemId, userId, operation);
+            if (!response.Success) return NotFound(new StringResponse() { Message = response.Message });
+            return Ok(new StringResponse() { Message = response.Message });
+        }
+
+        [HttpGet("SlideCartItemAmountByMultiple/{cartItemId}/{userId}/{operation}/{amount}")]
+        [Authorize(Roles = "User")]
+        public ActionResult<StringResponse> SlideCartItemAmountByMultiple(int cartItemId, int userId, Operation operation, int amount)
+        {
+            var response = _shoppingCartService.SlideCartItemAmountByMultiple(cartItemId, userId, operation, amount);
+            if (!response.Success) return BadRequest(new StringResponse() { Message = response.Message });
             return Ok(new StringResponse() { Message = response.Message });
         }
     }
