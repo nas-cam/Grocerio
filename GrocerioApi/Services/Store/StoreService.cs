@@ -230,7 +230,7 @@ namespace GrocerioApi.Services.Store
                 if (!insertedProductIds.Contains(product.Id))
                     missingProducts.Add(product);
 
-            return _mapper.Map<List<GrocerioModels.Product.MinifiedProduct>>(missingProducts);
+            return _mapper.Map<List<GrocerioModels.Product.MinifiedProduct>>(missingProducts.OrderBy(p=>p.Name).ToList());
         }
 
         public ProductManipulationResponse AddProduct(int storeId, ProductManipulationRequest request)
@@ -368,7 +368,7 @@ namespace GrocerioApi.Services.Store
                     foreach (var category in allDatabaseCategories)
                         if (!allStoreCategories.Contains(category)) missingCategories.Add(category);
 
-                    return _mapper.Map<List<GrocerioModels.Category.Category>>(missingCategories);
+                    return _mapper.Map<List<GrocerioModels.Category.Category>>(missingCategories.OrderBy(c=>c.Name).ToList());
 
                 case false:
                     return _mapper.Map<List<GrocerioModels.Category.Category>>(
@@ -378,6 +378,7 @@ namespace GrocerioApi.Services.Store
                         .Where(sp => sp.StoreId == storeId)
                         .Select(sp => sp.Product.Category)
                         .Distinct()
+                        .OrderBy(c=>c.Name)
                         .ToList());
             }
         }
@@ -407,7 +408,7 @@ namespace GrocerioApi.Services.Store
                                 TypeName = type.ToString()
                             });
                     }
-                    return missingProductTypes;
+                    return missingProductTypes.OrderBy(p=>p.TypeName).ToList();
 
                 case false:
                     var storeProductTypes = new List<ProructTypeItem>();
@@ -417,7 +418,7 @@ namespace GrocerioApi.Services.Store
                             Type = storeType, 
                             TypeName = storeType.ToString()
                         });
-                    return storeProductTypes;
+                    return storeProductTypes.OrderBy(p => p.TypeName).ToList();
             }
         }
 
@@ -509,10 +510,13 @@ namespace GrocerioApi.Services.Store
                  pull the "stores" data trough content based filtering (CBS), around stores the
                  user has frequetly shoped in (based on tables like the cart, completed purchases etc.)
                 */
+                return stores;
+            }
+            else
+            {
+                return stores.OrderBy(s=>s.Name).ToList();
             }
             #endregion
-
-            return stores;
         }
 
         public List<GrocerioModels.Store.Model.StoreProductModel> ReceiveStoreProducts(ProductFilters productFilters)
@@ -585,11 +589,13 @@ namespace GrocerioApi.Services.Store
                  pull the "products" data trough content based filtering (CBS), around products the
                  user has frequetly shoped for (based on tables like the cart, completed purchases etc.)
                 */
+                return products;
+            }
+            else
+            {
+                return products.OrderBy(p=>p.Product.Name).ToList();
             }
             #endregion
-
-
-            return products;
         }
     }
 }

@@ -77,7 +77,7 @@ namespace GrocerioApi.Services.User
             if (request.Active == Active.IsActive) query = query.Where(m => m.Active);
             if (request.Active == Active.NotActive) query = query.Where(m => !m.Active);
 
-            return _mapper.Map<List<GrocerioModels.Users.User>>(query.ToList());
+            return _mapper.Map<List<GrocerioModels.Users.User>>(query.OrderBy(u=>u.FirstName).ToList());
         }
 
         public BoolResponse ChangeUserActivity(int userId, bool active)

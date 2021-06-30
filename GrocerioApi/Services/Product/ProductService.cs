@@ -29,7 +29,7 @@ namespace GrocerioApi.Services.Product
             List<ProructTypeItem> types = new List<ProructTypeItem>();
             foreach (GrocerioModels.Enums.Product.Type type in (GrocerioModels.Enums.Product.Type[])Enum.GetValues(typeof(GrocerioModels.Enums.Product.Type)))
                 types.Add(new ProructTypeItem(){Type = type, TypeName = type.ToString()});
-            return types;
+            return types.OrderBy(t=>t.TypeName).ToList();
         }
 
         public InsertProductResponse Insert(InsertProductRequest request)
@@ -104,7 +104,7 @@ namespace GrocerioApi.Services.Product
                 responseProducts.Add(newProduct);
             }
 
-            return responseProducts;
+            return responseProducts.OrderBy(p=>p.Name).ToList();
         }
 
         public InsertProductResponse EditProduct(EditProductRequest request)

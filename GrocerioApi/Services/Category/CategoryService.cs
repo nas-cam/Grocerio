@@ -55,10 +55,10 @@ namespace GrocerioApi.Services.Category
         public List<GrocerioModels.Category.Category> GetAllCategories(string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
-                return _mapper.Map<List<GrocerioModels.Category.Category>>(_context.Categories.ToList());
+                return _mapper.Map<List<GrocerioModels.Category.Category>>(_context.Categories.OrderBy(c=>c.Name).ToList());
             return _mapper.Map<List<GrocerioModels.Category.Category>>(_context.Categories.Where(c =>
                     c.Name.ToLower().Contains(searchTerm.ToLower()) ||
-                    c.Description.ToLower().Contains(searchTerm.ToLower())).ToList());
+                    c.Description.ToLower().Contains(searchTerm.ToLower())).OrderBy(c => c.Name).ToList());
         }
 
         public GrocerioModels.Category.Category GetCategoryById(int categoryId)
