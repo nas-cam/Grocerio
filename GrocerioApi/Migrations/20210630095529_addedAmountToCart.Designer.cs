@@ -4,14 +4,16 @@ using GrocerioApi.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GrocerioApi.Migrations
 {
     [DbContext(typeof(GrocerioContext))]
-    partial class GrocerioContextModelSnapshot : ModelSnapshot
+    [Migration("20210630095529_addedAmountToCart")]
+    partial class addedAmountToCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,9 +127,6 @@ namespace GrocerioApi.Migrations
 
                     b.Property<int>("StoreProductId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("Updated")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -263,7 +262,7 @@ namespace GrocerioApi.Migrations
 
             modelBuilder.Entity("GrocerioApi.Database.Entities.ShoppingCart", b =>
                 {
-                    b.HasOne("GrocerioApi.Database.Entities.StoreProducts", "StoreProduct")
+                    b.HasOne("GrocerioApi.Database.Entities.StoreProducts", "storeProduct")
                         .WithMany()
                         .HasForeignKey("StoreProductId")
                         .OnDelete(DeleteBehavior.Cascade)

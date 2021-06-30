@@ -432,6 +432,8 @@ namespace GrocerioApi.Services.Store
 
         public List<GrocerioModels.Store.Model.StoreModel> ReceiveStores(StoreFilters storeFilters)
         {
+
+            #region Validation
             //get and validate user
             var account = _context.Accounts
                 .Select(x => new { x.AccountId, x.Username, x.Role })
@@ -444,9 +446,10 @@ namespace GrocerioApi.Services.Store
                 .ThenInclude(sp => sp.Product)
                 .ThenInclude(p => p.Category)
                 .AsQueryable();
+            #endregion
 
             #region RequestFiltering
-        
+
             //filter by search term
             if (!string.IsNullOrWhiteSpace(storeFilters.SearchTerm))
             {
@@ -498,12 +501,14 @@ namespace GrocerioApi.Services.Store
             }
             #endregion
 
+            #region ModelCreation
             //convert filtered database stores into store models
             var stores = new List<GrocerioModels.Store.Model.StoreModel>();
             foreach (var store in allStoresQuery.ToList()) stores.Add(CreateStoreModel(store.Id, store));
+            #endregion
 
             #region ContentBasedFiltering
-            if(account.Role == GrocerioModels.Enums.User.Role.User)
+            if (account.Role == GrocerioModels.Enums.User.Role.User)
             {
                 /*
                  If the user that requests the list of stores is a consumer and not an admin,
@@ -522,6 +527,8 @@ namespace GrocerioApi.Services.Store
         public List<GrocerioModels.Store.Model.StoreProductModel> ReceiveStoreProducts(ProductFilters productFilters)
         {
 
+            #region Validation
+            
             //get and validate user
             var account = _context.Accounts
                 .Select(x => new { x.AccountId, x.Username, x.Role })
@@ -538,6 +545,7 @@ namespace GrocerioApi.Services.Store
                                                 .ThenInclude(p=>p.Category)
                                                 .Where(sp => sp.StoreId == store.Id)
                                                 .AsQueryable();
+            #endregion
 
             #region RequestFiltering
 
@@ -559,27 +567,41 @@ namespace GrocerioApi.Services.Store
                 allProductsQuery = allProductsQuery.Where(p => productFilters.Types.Contains(p.Product.ProductType));
             #endregion
 
+            #region ModelCreation
             var products = new List<GrocerioModels.Store.Model.StoreProductModel>();
+            var usersCart = new List<Database.Entities.ShoppingCart>();
+            if (account.Role == GrocerioModels.Enums.User.Role.User) usersCart = _context.ShoppingCart.Where(c => c.UserId == _context.Users.Single(u => u.AccountId == account.AccountId).UserId).ToList();
+
             foreach(var product in allProductsQuery.ToList())
             {
-                products.Add(new GrocerioModels.Store.Model.StoreProductModel()
+                var newStoreProductModel = new GrocerioModels.Store.Model.StoreProductModel()
                 {
-                    Price = product.Price, 
-                    Registered = product.Registered, 
-                    StoreProductId =product.Id, 
+                    Price = product.Price,
+                    Registered = product.Registered,
+                    StoreProductId = product.Id,
+                    InCart = false,
                     Product = new GrocerioModels.Store.Model.ProductModel()
                     {
-                        Id = product.Product.Id, 
-                        CategoryId = product.Product.CategoryId, 
-                        CategoryName = product.Product.Category.Name.ToString(), 
-                        Name = product.Product.Name, 
-                        Description = product.Product.Description, 
-                        ImageLink = product.Product.ImageLink, 
-                        ProductType = product.Product.ProductType, 
+                        Id = product.Product.Id,
+                        CategoryId = product.Product.CategoryId,
+                        CategoryName = product.Product.Category.Name.ToString(),
+                        Name = product.Product.Name,
+                        Description = product.Product.Description,
+                        ImageLink = product.Product.ImageLink,
+                        ProductType = product.Product.ProductType,
                         ProductTypeName = product.Product.ProductType.ToString()
                     }
-                });
+                };
+
+                /*
+                if the products are pulled for a consumer, the inCart variable will display if that item is inside the consumers cart
+                if the products are pulled for an admin, the inCart variable will display if the item is currently in any shopping cart
+                */
+                if(account.Role == GrocerioModels.Enums.User.Role.User && usersCart.Count != 0) newStoreProductModel.InCart = usersCart.Where(c => c.StoreProductId == product.Id).ToList().Count != 0;
+                if (account.Role == GrocerioModels.Enums.User.Role.Admin) newStoreProductModel.InCart = _context.ShoppingCart.Where(c => c.StoreProductId == product.Id).Select(c=>c.Id).ToList().Count != 0;
+                products.Add(newStoreProductModel);
             }
+            #endregion
 
             #region ContentBasedFiltering
             if (account.Role == GrocerioModels.Enums.User.Role.User)

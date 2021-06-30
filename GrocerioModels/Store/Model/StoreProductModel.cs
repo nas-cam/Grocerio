@@ -9,6 +9,7 @@ namespace GrocerioModels.Store.Model
         public int StoreProductId { get; set; }
         public double Price { get; set; }
         public DateTime Registered { get; set; }
+        public bool InCart { get; set; }
         public ProductModel Product { get; set; }
     }
 }

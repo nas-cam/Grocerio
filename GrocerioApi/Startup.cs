@@ -23,6 +23,7 @@ using GrocerioApi.Services.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using GrocerioApi.Services.ShoppingCart;
 
 namespace GrocerioApi
 {
@@ -84,7 +85,7 @@ namespace GrocerioApi
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IStoreService, StoreService>();
-
+            services.AddScoped<IShoppingCartService, ShoppingCartService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -13,6 +13,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20210616193624_potentialRoleChange.cs" />
     <Compile Remove="Migrations\20210616193624_potentialRoleChange.Designer.cs" />
+    <Compile Remove="Migrations\20210630100520_cartRenamings.cs" />
+    <Compile Remove="Migrations\20210630100520_cartRenamings.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
