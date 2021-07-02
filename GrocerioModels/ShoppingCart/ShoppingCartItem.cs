@@ -19,7 +19,7 @@ namespace GrocerioModels.ShoppingCart
 
         public int UserId { get; set; }
         public string Username { get; set; }
+        public int DeliveryDays { get; set; }
         public double Total { get; set; }
-
     }
 }

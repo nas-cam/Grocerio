@@ -23,5 +23,6 @@ namespace GrocerioApi.Database.Context
         public DbSet<Store> Stores { get; set; }
         public DbSet<StoreProducts> StoreProducts { get; set; }
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
+        public DbSet<Tracking> Trackings { get; set; }
     }
 }

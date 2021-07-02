@@ -22,5 +22,7 @@ namespace GrocerioApi.Database.Entities
         [ForeignKey("Account")]
         public int AccountId { get; set; }
         public virtual Account Account { get; set; }
+
+        public List<Tracking> Trackings { get; set; }
     }
 }

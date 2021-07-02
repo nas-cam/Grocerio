@@ -185,5 +185,17 @@ namespace GrocerioApi.Services.User
             _context.SaveChanges();
             return new StringResponse() {Message = flag ? "All users have been locked" : "All users have been unlocked"};
         }
+
+        public GrocerioModels.Users.UserValidation GetUserValidationParams(int userId)
+        {
+
+            var user = _context.Users.Select(x => new { Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
+            if (user == null || !user.Active) return null;
+            return new GrocerioModels.Users.UserValidation()
+            {
+                Active = user.Active, 
+                Locked = user.Locked
+            };
+        }
     }
 }

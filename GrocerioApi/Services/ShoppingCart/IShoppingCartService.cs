@@ -15,5 +15,6 @@ namespace GrocerioApi.Services.ShoppingCart
         BoolResponse RemoveItem(int cartItemId, int userId);
         BoolResponse SlideCartItemAmountByOne(int cartItemId, int userId, Operation operation);
         BoolResponse SlideCartItemAmountByMultiple(int cartItemId, int userId, Operation operation, int amount);
+        BoolResponse Checkout(int userId, CreditCardInformation cardInformation);
     }
 }

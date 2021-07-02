@@ -10,6 +10,7 @@ using GrocerioModels.Response;
 using GrocerioModels.Response.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.Repositories;
+using GrocerioModels.Users;
 
 namespace GrocerioApi.Controllers
 {
@@ -80,5 +81,15 @@ namespace GrocerioApi.Controllers
         {
             return Ok(_userService.HandleLock(flag));
         }
+
+        [HttpGet("GetUserValidationParams/{userId}")]
+        [Authorize]
+        public ActionResult<UserValidation> GetUserValidationParams(int userId)
+        {
+            var response = _userService.GetUserValidationParams(userId);
+            if (response == null) return NotFound(new StringResponse() { Message = "Invalid user id" });
+            return Ok(response);
+        }
+
     }
 }

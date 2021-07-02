@@ -31,6 +31,18 @@ namespace GrocerioApi.Services.ShoppingCart
                 response.Message = "Invalid user id";
                 return response;
             }
+
+            if (!user.Active)
+            {
+                response.Message = "The user is currently deactivated";
+                return response;
+            }
+
+            if (user.Locked)
+            {
+                response.Message = "The user is currently locked";
+                return response;
+            }
             var storeProduct = _context.StoreProducts.SingleOrDefault(sp => sp.Id == storeProductId);
             if(storeProduct == null)
             {
@@ -44,7 +56,6 @@ namespace GrocerioApi.Services.ShoppingCart
             }
             #endregion
 
-
             response.Success = true;
             var existingCartEntry = _context.ShoppingCart
                                             .Include(c => c.StoreProduct)
@@ -55,13 +66,15 @@ namespace GrocerioApi.Services.ShoppingCart
                                             .SingleOrDefault(c => c.UserId == userId && c.StoreProductId == storeProductId);
             if (existingCartEntry == null)
             {
+                Random randomGenerator = new Random();
                 _context.ShoppingCart.Add(new Database.Entities.ShoppingCart()
                 {
                     UserId = userId,
                     StoreProductId = storeProductId,
                     Amount = amount,
                     AddedIn = Get.CurrentDate(),
-                    Updated = Get.CurrentDate()
+                    Updated = Get.CurrentDate(), 
+                    DeliveryDays = randomGenerator.Next(1, 10)
                 });
 
                 var outputData = _context.StoreProducts
@@ -87,8 +100,9 @@ namespace GrocerioApi.Services.ShoppingCart
         public ShoppingCartModel GetShoppingCart(int userId)
         {
             //validate user
-            var user = _context.Users.Include(u => u.Account).Select(x => new { Username = x.Account.Username, Id = x.UserId }).SingleOrDefault(u => u.Id == userId);
-            if (user == null) return null;
+            var user = _context.Users.Include(u => u.Account).Select(x => new { Username = x.Account.Username, Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
+            if (user == null || !user.Active) return null;
+
             var response = new ShoppingCartModel() { 
                 CheckoutTotal = 0, 
                 Items = new List<ShoppingCartItem>()
@@ -118,6 +132,7 @@ namespace GrocerioApi.Services.ShoppingCart
                     Updated = shoppingCartItem.Updated,
                     UserId = user.Id,
                     Username = user.Username,
+                    DeliveryDays = shoppingCartItem.DeliveryDays,
                     Total = Math.Round(shoppingCartItem.StoreProduct.Price * shoppingCartItem.Amount, 2)
                 });
                 response.CheckoutTotal += Math.Round(shoppingCartItem.StoreProduct.Price * shoppingCartItem.Amount, 2);
@@ -162,10 +177,22 @@ namespace GrocerioApi.Services.ShoppingCart
             var response = new BoolResponse() { Success = false };
 
             #region Validation
-            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId }).SingleOrDefault(u => u.Id == userId);
+            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
             if (user == null)
             {
                 response.Message = "Invalid user id";
+                return response;
+            }
+
+            if (!user.Active)
+            {
+                response.Message = "The user is currently deactivated";
+                return response;
+            }
+
+            if (user.Locked)
+            {
+                response.Message = "The user is currently locked";
                 return response;
             }
 
@@ -206,10 +233,22 @@ namespace GrocerioApi.Services.ShoppingCart
             var response = new BoolResponse() { Success = false };
 
             #region Validation
-            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId }).SingleOrDefault(u => u.Id == userId);
+            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
             if (user == null)
             {
                 response.Message = "Invalid user id";
+                return response;
+            }
+
+            if (!user.Active)
+            {
+                response.Message = "The user is currently deactivated";
+                return response;
+            }
+
+            if (user.Locked)
+            {
+                response.Message = "The user is currently locked";
                 return response;
             }
 
@@ -250,5 +289,83 @@ namespace GrocerioApi.Services.ShoppingCart
             return response;
         }
 
+        public BoolResponse Checkout(int userId, CreditCardInformation cardInformation)
+        {
+            var response = new BoolResponse() { Success = false };
+
+            #region Validation
+            var user = _context.Users.Select(x => new { x.FirstName, Id = x.UserId, x.LastName, x.Address, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                response.Message = "Invalid user id";
+                return response;
+            }
+
+            if (!user.Active)
+            {
+                response.Message = "The user is currently deactivated";
+                return response;
+            }
+
+            if (user.Locked)
+            {
+                response.Message = "The user is currently locked";
+                return response;
+            }
+
+            var cartItems = _context.ShoppingCart
+                                    .Include(c => c.StoreProduct)
+                                    .ThenInclude(sp => sp.Product)
+                                    .Include(c => c.StoreProduct)
+                                    .ThenInclude(sp => sp.Store)
+                                    .Where(c => c.UserId == userId)
+                                    .ToList();
+
+            if(cartItems.Count == 0)
+            {
+                response.Message = "The user has no items in his cart";
+                return response;
+            }
+
+            #endregion
+
+            #region CardPayment
+            double cartTotal = cartItems.Sum(c => Math.Round(c.StoreProduct.Price * c.Amount, 2));
+            /*
+            proceed to charge the users credit card, and if the payment gets processed successfully continue
+            if the payment fails stop the checkout process
+            */
+            #endregion
+                
+            #region TableCheckout
+            foreach (var cartItem in cartItems)
+            {
+                //move the cart item to the tracking table
+                _context.Trackings.Add(new Database.Entities.Tracking()
+                {
+                    Amount = cartItem.Amount,
+                    DaysLeft = cartItem.DeliveryDays,
+                    LastUpdated = Get.CurrentDate(),
+                    Price = cartItem.StoreProduct.Price,
+                    Product = cartItem.StoreProduct.Product.Name,
+                    ProductDescription = cartItem.StoreProduct.Product.Description,
+                    Store = cartItem.StoreProduct.Store.Name,
+                    StoreAddress = cartItem.StoreProduct.Store.Address,
+                    ShippingAddress = user.Address,
+                    Total = Math.Round(cartItem.StoreProduct.Price * cartItem.Amount, 2), 
+                    UserId = userId
+                });
+
+                //remove cart item from shopping cart table
+                _context.ShoppingCart.Remove(cartItem);
+
+                _context.SaveChanges();
+            }
+            #endregion
+
+            response.Success = true;
+            response.Message = $"{user.FirstName} {user.LastName}, you have checked out successfully, track your items until they arrives at your door step.";
+            return response;
+        }
     }
 }

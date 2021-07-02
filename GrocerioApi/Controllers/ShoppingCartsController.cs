@@ -67,5 +67,15 @@ namespace GrocerioApi.Controllers
             if (!response.Success) return BadRequest(new StringResponse() { Message = response.Message });
             return Ok(new StringResponse() { Message = response.Message });
         }
+
+        [HttpPost("Checkout/{userId}")]
+        [Authorize(Roles = "User")]
+        public ActionResult<StringResponse> Checkout(int userId, [FromBody] CreditCardInformation cardInformation)
+        {
+            var response = _shoppingCartService.Checkout(userId, cardInformation);
+            if (!response.Success) return BadRequest(new StringResponse() { Message = response.Message });
+            return Ok(new StringResponse() { Message = response.Message});
+        }
+
     }
 }

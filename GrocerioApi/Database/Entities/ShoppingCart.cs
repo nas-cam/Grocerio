@@ -20,6 +20,8 @@ namespace GrocerioApi.Database.Entities
 
         public int Amount { get; set; }
 
+        public int DeliveryDays { get; set; }
+
         public DateTime AddedIn { get; set; }
         public DateTime Updated { get; set; }
     }
