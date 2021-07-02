@@ -22,6 +22,8 @@ namespace GrocerioApi.Mappers
             CreateMap<Database.Entities.Store, GrocerioModels.Store.Store>().ReverseMap();
             CreateMap<Database.Entities.StoreProducts, GrocerioModels.Store.StoreProducts>().ReverseMap();
             CreateMap<Database.Entities.Product, GrocerioModels.Product.MinifiedProduct>().ReverseMap();
+            CreateMap<Database.Entities.Tracking, GrocerioModels.Purchase.TrackingModel>().ReverseMap();
+            CreateMap<Database.Entities.Purchase, GrocerioModels.Purchase.PurchaseModel>().ReverseMap();
         }
 
     }

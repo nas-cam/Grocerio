@@ -24,6 +24,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using GrocerioApi.Services.ShoppingCart;
+using GrocerioApi.Services.Purchase;
+using GrocerioApi.Workers;
 
 namespace GrocerioApi
 {
@@ -77,6 +79,9 @@ namespace GrocerioApi
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
+            //workers
+            services.AddHostedService<TrackingWorker>();
+
             //DI
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IAccountService, AccountService>();
@@ -86,6 +91,7 @@ namespace GrocerioApi
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IStoreService, StoreService>();
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
+            services.AddScoped<IPurchaseService, PurchaseService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

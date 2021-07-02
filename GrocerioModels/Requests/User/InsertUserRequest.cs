@@ -27,6 +27,9 @@ namespace GrocerioModels.Requests.User
         [Required]
         [MinLength(5)]
         public string Address { get; set; }
+        [Required]
+        [MinLength(3)]
+        public string City { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }

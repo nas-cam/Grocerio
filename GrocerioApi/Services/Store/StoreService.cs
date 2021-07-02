@@ -88,8 +88,9 @@ namespace GrocerioApi.Services.Store
             var dbStore = storeObject != null ? storeObject : _context.Stores.Include(s => s.StoreProducts).ThenInclude(sp => sp.Product).ThenInclude(p=>p.Category).Single(s => s.Id == storeId);
             var store = new GrocerioModels.Store.Model.StoreModel()
             {
-                Id = dbStore.Id, 
-                Address = dbStore.Address, 
+                Id = dbStore.Id,
+                Address = dbStore.Address,
+                City = dbStore.City,
                 UniqueStoreNumber = dbStore.UniqueStoreNumber, 
                 Description = dbStore.Description, 
                 ImageLink = dbStore.ImageLink, 

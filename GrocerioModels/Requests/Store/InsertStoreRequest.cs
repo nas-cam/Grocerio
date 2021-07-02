@@ -25,6 +25,11 @@ namespace GrocerioModels.Requests.Store
         public string Address { get; set; }
 
         [Required]
+        [MinLength(5)]
+        [MaxLength(30)]
+        public string City { get; set; }
+
+        [Required]
         public Membership Membership { get; set; }
 
         [Required]

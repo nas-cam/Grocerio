@@ -12,6 +12,7 @@ namespace GrocerioApi.Database.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }
+        public string City { get; set; }
         public Membership Membership { get; set; }
         public string ImageLink { get; set; }
         public int UniqueStoreNumber { get; set; }

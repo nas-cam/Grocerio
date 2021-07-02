@@ -4,14 +4,16 @@ using GrocerioApi.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GrocerioApi.Migrations
 {
     [DbContext(typeof(GrocerioContext))]
-    partial class GrocerioContextModelSnapshot : ModelSnapshot
+    [Migration("20210702111656_dateWork")]
+    partial class dateWork
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,32 +83,6 @@ namespace GrocerioApi.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("GrocerioApi.Database.Entities.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NotificationCategory")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications");
-                });
-
             modelBuilder.Entity("GrocerioApi.Database.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -152,9 +128,6 @@ namespace GrocerioApi.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CategoryImage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PaymentIdentifier")
                         .HasColumnType("nvarchar(max)");
 
@@ -165,9 +138,6 @@ namespace GrocerioApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductType")
@@ -183,12 +153,6 @@ namespace GrocerioApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StoreAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StoreCity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StoreImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Total")
@@ -246,9 +210,6 @@ namespace GrocerioApi.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -312,12 +273,6 @@ namespace GrocerioApi.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CategoryImage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CurrentLocation")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("DaysLeft")
                         .HasColumnType("int");
 
@@ -336,9 +291,6 @@ namespace GrocerioApi.Migrations
                     b.Property<string>("ProductDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProductImage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ProductType")
                         .HasColumnType("nvarchar(max)");
 
@@ -352,12 +304,6 @@ namespace GrocerioApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StoreAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StoreCity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StoreImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Total")
@@ -392,9 +338,6 @@ namespace GrocerioApi.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
@@ -425,15 +368,6 @@ namespace GrocerioApi.Migrations
                     b.HasOne("GrocerioApi.Database.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GrocerioApi.Database.Entities.Notification", b =>
-                {
-                    b.HasOne("GrocerioApi.Database.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

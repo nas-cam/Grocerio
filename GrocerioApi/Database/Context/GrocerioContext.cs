@@ -24,5 +24,7 @@ namespace GrocerioApi.Database.Context
         public DbSet<StoreProducts> StoreProducts { get; set; }
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
         public DbSet<Tracking> Trackings { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
     }
 }

@@ -316,6 +316,7 @@ namespace GrocerioApi.Services.ShoppingCart
             var cartItems = _context.ShoppingCart
                                     .Include(c => c.StoreProduct)
                                     .ThenInclude(sp => sp.Product)
+                                    .ThenInclude(p=>p.Category)
                                     .Include(c => c.StoreProduct)
                                     .ThenInclude(sp => sp.Store)
                                     .Where(c => c.UserId == userId)
@@ -334,6 +335,8 @@ namespace GrocerioApi.Services.ShoppingCart
             /*
             proceed to charge the users credit card, and if the payment gets processed successfully continue
             if the payment fails stop the checkout process
+            after the payment, save the tracking identifier from the payment API to the database
+            to be able to store and refund the payment later if needed
             */
             #endregion
                 
@@ -351,9 +354,18 @@ namespace GrocerioApi.Services.ShoppingCart
                     ProductDescription = cartItem.StoreProduct.Product.Description,
                     Store = cartItem.StoreProduct.Store.Name,
                     StoreAddress = cartItem.StoreProduct.Store.Address,
+                    StoreCity = cartItem.StoreProduct.Store.City,
+                    CurrentLocation = cartItem.StoreProduct.Store.City,
                     ShippingAddress = user.Address,
                     Total = Math.Round(cartItem.StoreProduct.Price * cartItem.Amount, 2), 
-                    UserId = userId
+                    Category = cartItem.StoreProduct.Product.Category.Name, 
+                    ProductType = cartItem.StoreProduct.Product.ProductType.ToString(),
+                    UserId = userId, 
+                    Purchased = Get.CurrentDate(),
+                    CategoryImage = cartItem.StoreProduct.Product.Category.ImageLink, 
+                    ProductImage = cartItem.StoreProduct.Product.ImageLink, 
+                    StoreImage = cartItem.StoreProduct.Store.ImageLink,
+                    PaymentIdentifier ="XXXAAABBBCCC" //store the one from the payment API
                 });
 
                 //remove cart item from shopping cart table
