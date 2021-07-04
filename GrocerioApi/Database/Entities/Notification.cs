@@ -11,10 +11,10 @@ namespace GrocerioApi.Database.Entities
     {
         public int Id { get; set; }
 
-        [ForeignKey("User")]
-        public int UserId { get; set; }
+        [ForeignKey("Account")]
+        public int AccountId { get; set; }
 
-        public User User { get; set; }
+        public Account Account { get; set; }
 
         public string Message { get; set; }
 
