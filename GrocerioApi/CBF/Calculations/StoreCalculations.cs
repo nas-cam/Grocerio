@@ -91,7 +91,7 @@ namespace GrocerioApi.CBF.Calculations
             if (shoppingCartStores.Count == 0 && trackingStores.Count == 0 && purchaseStores.Count == 0) return stores.OrderBy(s => s.Name).ToList();
             #endregion
 
-            #region CalculateStoresScore
+            #region CalculateStoreScore
             foreach (var store in stores)
             {
                 StoreScore storeScore = new StoreScore()

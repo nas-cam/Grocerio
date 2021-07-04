@@ -614,7 +614,10 @@ namespace GrocerioApi.Services.Store
                  pull the "products" data trough content based filtering (CBS), around products the
                  user has frequetly shoped for (based on tables like the cart, tracking, completed purchases etc.)
                 */
-                return products;
+                return new CBF.Calculations.ProductCalculations(_context).SortProducts(products,
+                                                                                       _context.Users
+                                                                                               .Select(x => new { x.AccountId, x.UserId })
+                                                                                               .Single(u => u.AccountId == productFilters.AccountId).UserId);
             }
             else
             {
