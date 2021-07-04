@@ -20,5 +20,6 @@ namespace GrocerioApi.Services.User
         BoolResponse UpdatePassword(int userId, UpdatePasswordRequest request);
         StringResponse HandleLock(bool flag);
         UserValidation GetUserValidationParams(int userId);
+        int GetAccountId(int userId);
     }
 }

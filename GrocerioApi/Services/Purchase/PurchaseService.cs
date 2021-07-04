@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using GrocerioApi.Database.Context;
+using GrocerioApi.Services.Notification;
+using GrocerioApi.Services.User;
+using GrocerioModels.Enums.Notification;
 using GrocerioModels.Purchase;
 using GrocerioModels.Response;
 using GrocerioModels.Utils;
@@ -16,10 +19,15 @@ namespace GrocerioApi.Services.Purchase
     {
         public readonly GrocerioContext _context;
         public readonly IMapper _mapper;
-        public PurchaseService(GrocerioContext context, IMapper mapper)
+        private readonly INotificationService _notificationService;
+        private readonly IUserService _userService;
+
+        public PurchaseService(GrocerioContext context, IMapper mapper, INotificationService notificationService, IUserService userService)
         {
             _context = context;
             _mapper = mapper;
+            _notificationService = notificationService;
+            _userService = userService;
         }
 
         public List<TrackingModel> GetTrackingItems(int userId)
@@ -75,6 +83,8 @@ namespace GrocerioApi.Services.Purchase
             response.Success = true;
             response.Message = "The item has been stored, and the refund issued successfully";
 
+            _notificationService.AddNotification($"Tracking item: {trackingItem.Product} from {trackingItem.Store} for {trackingItem.Price} refunded successfully", NotificationCategory.Warning, _userService.GetAccountId(userId));
+
             return response;
         }
 
@@ -129,6 +139,7 @@ namespace GrocerioApi.Services.Purchase
                         });
                         _context.Trackings.Remove(trackingItem);
                         _context.SaveChanges();
+                        _notificationService.AddNotification($"The item: {trackingItem.Product} from {trackingItem.Store} for {trackingItem.Price} has been successfully", NotificationCategory.Success, _userService.GetAccountId(trackingItem.UserId));
                     }
                 }
             }
@@ -185,6 +196,9 @@ namespace GrocerioApi.Services.Purchase
             _context.SaveChanges();
             response.Success = true;
             response.Message = "The item has been stored, and the refund issued successfully";
+
+            _notificationService.AddNotification($"Tracking item: {purchasedItem.Product} from {purchasedItem.Store} for {purchasedItem.Price} returned successfully", NotificationCategory.Warning, _userService.GetAccountId(userId));
+
 
             return response;
         }

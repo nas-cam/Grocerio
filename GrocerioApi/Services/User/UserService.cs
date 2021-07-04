@@ -197,5 +197,10 @@ namespace GrocerioApi.Services.User
                 Locked = user.Locked
             };
         }
+
+        public int GetAccountId(int userId)
+        {
+            return _context.Users.Single(u => u.UserId == userId).AccountId;
+        }
     }
 }

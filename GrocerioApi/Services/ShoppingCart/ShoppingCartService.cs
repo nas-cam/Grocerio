@@ -1,5 +1,8 @@
 ﻿using GrocerioApi.Database.Context;
+using GrocerioApi.Services.Notification;
+using GrocerioApi.Services.User;
 using GrocerioModels.Enums.General;
+using GrocerioModels.Enums.Notification;
 using GrocerioModels.Response;
 using GrocerioModels.ShoppingCart;
 using GrocerioModels.Utils;
@@ -14,10 +17,14 @@ namespace GrocerioApi.Services.ShoppingCart
     public class ShoppingCartService : IShoppingCartService
     {
         public readonly GrocerioContext _context;
+        private readonly INotificationService _notificationService;
+        private readonly IUserService _userService;
         
-        public ShoppingCartService(GrocerioContext context)
+        public ShoppingCartService(GrocerioContext context, INotificationService notificationService, IUserService userService)
         {
             _context = context;
+            _notificationService = notificationService;
+            _userService = userService;
         }
 
         public BoolResponse AddItem(int userId, int storeProductId, int amount)
@@ -84,13 +91,14 @@ namespace GrocerioApi.Services.ShoppingCart
                                          .Single(sp => sp.Id == storeProductId);
 
                 response.Message = $"Added in {amount} of the item '{outputData.ProductName}' for the store '{outputData.StoreName}' to {user.FirstName} {user.LastName}";
-
+                _notificationService.AddNotification($"Added in {amount} of the item '{outputData.ProductName}' for the store '{outputData.StoreName}.'", NotificationCategory.Info, _userService.GetAccountId(userId));
             }
             else
             {
                 existingCartEntry.Amount += amount;
                 existingCartEntry.Updated = Get.CurrentDate();
                 response.Message = $"Added in {amount} of the item '{existingCartEntry.StoreProduct.Product.Name}' for the store '{existingCartEntry.StoreProduct.Store.Name}' to {existingCartEntry.User.FirstName} {existingCartEntry.User.LastName}";
+                _notificationService.AddNotification($"Added in {amount} of the item '{existingCartEntry.StoreProduct.Product.Name}' for the store '{existingCartEntry.StoreProduct.Store.Name}.'", NotificationCategory.Info, _userService.GetAccountId(userId));
             }
 
             _context.SaveChanges();
@@ -151,7 +159,12 @@ namespace GrocerioApi.Services.ShoppingCart
                 return response;
             }
            
-            var cartItem = _context.ShoppingCart.SingleOrDefault(c => c.Id == cartItemId);
+            var cartItem = _context.ShoppingCart
+                                   .Include(c=>c.StoreProduct)
+                                   .ThenInclude(sp=>sp.Product)
+                                   .Include(c => c.StoreProduct)
+                                   .ThenInclude(sp => sp.Store)
+                                   .SingleOrDefault(c => c.Id == cartItemId);
             if(cartItem == null)
             {
                 response.Message = "Invalid cart item id";
@@ -169,6 +182,7 @@ namespace GrocerioApi.Services.ShoppingCart
             _context.SaveChanges();
             response.Success = true;
             response.Message = "Cart item removed successfully";
+            _notificationService.AddNotification($"Cart item: {cartItem.StoreProduct.Product.Name} from {cartItem.StoreProduct.Store.Name} for {cartItem.StoreProduct.Price}, removed successfully.", NotificationCategory.Warning, _userService.GetAccountId(userId));
             return response;
         }
 
@@ -376,7 +390,8 @@ namespace GrocerioApi.Services.ShoppingCart
             #endregion
 
             response.Success = true;
-            response.Message = $"{user.FirstName} {user.LastName}, you have checked out successfully, track your items until they arrives at your door step.";
+            response.Message = $"{user.FirstName} {user.LastName}, you have checked out successfully, track your items until they arrive at your door step.";
+            _notificationService.AddNotification("You have checked out successfully, track your items until they arrive at your door step.", NotificationCategory.Success, _userService.GetAccountId(userId));
             return response;
         }
     }
