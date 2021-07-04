@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using GrocerioApi.CBF.Algorithm;
 using GrocerioApi.Database.Context;
 using GrocerioApi.Database.Entities;
 using GrocerioModels.Filters.Store;
@@ -186,6 +187,7 @@ namespace GrocerioApi.Services.Store
                 ImageLink = request.ImageLink, 
                 UniqueStoreNumber = request.UniqueStoreNumber, 
                 Membership = request.Membership,
+                City = request.City,
                 StoreProducts = new List<StoreProducts>()
             };
             foreach (var productItem in request.ProductItems)
@@ -513,15 +515,15 @@ namespace GrocerioApi.Services.Store
             {
                 /*
                  If the user that requests the list of stores is a consumer and not an admin,
-                 pull the "stores" data trough content based filtering (CBS), around stores the
-                 user has frequetly shoped in (based on tables like the cart, completed purchases etc.)
+                 pull the "stores" data trough content based filtering (CBF), around stores the
+                 user has frequetly shoped in (based on tables like the cart, tracking, completed purchases etc.)
                 */
-                return stores;
+                return new CBF.Calculations.StoreCalculations(_context).SortStores(stores,
+                                                                                   _context.Users
+                                                                                           .Select(x => new { x.AccountId, x.UserId })
+                                                                                           .Single(u => u.AccountId == storeFilters.AccountId).UserId);
             }
-            else
-            {
-                return stores.OrderBy(s=>s.Name).ToList();
-            }
+            else return stores.OrderBy(s=>s.Name).ToList();
             #endregion
         }
 
@@ -610,7 +612,7 @@ namespace GrocerioApi.Services.Store
                 /*
                  If the user that requests the list of products is a consumer and not an admin,
                  pull the "products" data trough content based filtering (CBS), around products the
-                 user has frequetly shoped for (based on tables like the cart, completed purchases etc.)
+                 user has frequetly shoped for (based on tables like the cart, tracking, completed purchases etc.)
                 */
                 return products;
             }

@@ -10,6 +10,7 @@ namespace GrocerioModels.Purchase
         public string Store { get; set; }
         public string StoreAddress { get; set; }
         public string StoreCity { get; set; }
+
         public string Product { get; set; }
         public string ProductDescription { get; set; }
         public int Amount { get; set; }
