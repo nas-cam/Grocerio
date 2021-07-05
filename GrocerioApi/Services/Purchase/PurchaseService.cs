@@ -35,7 +35,7 @@ namespace GrocerioApi.Services.Purchase
             var user = _context.Users.Select(x => new { Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
             if (user == null || !user.Active) return null;
 
-            return _mapper.Map<List<TrackingModel>>(_context.Trackings.Where(t => t.UserId == userId).ToList());
+            return _mapper.Map<List<TrackingModel>>(_context.Trackings.Where(t => t.UserId == userId).OrderByDescending(t=>t.Purchased).ToList());
         }
 
         public BoolResponse RefundTrackingItem(int userId, int trackingItemId)
@@ -88,11 +88,12 @@ namespace GrocerioApi.Services.Purchase
             return response;
         }
 
-        public void MoveTrackingItems()
+        public void MoveTrackingItems() 
         {
             //get all tracking items that need updating
             var today = Get.CurrentDate();
             var trackingItems = _context.Trackings.Include(t=>t.User).Where(t => t.LastUpdated.Date < today.Date).ToList();
+            var users = _context.Users.Select(x => new { x.UserId, x.FirstName, x.LastName }).ToList();
             if(trackingItems.Count != 0)
             {
                 foreach(var trackingItem in trackingItems)
@@ -116,30 +117,60 @@ namespace GrocerioApi.Services.Purchase
                     //if the amount of days i set to 0, deliver the item 
                     if (trackingItem.DaysLeft == 0)
                     {
-                        _context.Purchases.Add(new Database.Entities.Purchase()
+                        #region CreatePurchase
+                        var purchase = new Database.Entities.Purchase()
                         {
-                            Amount = trackingItem.Amount, 
-                            Category = trackingItem.Category, 
-                            PaymentIdentifier = trackingItem.PaymentIdentifier, 
-                            Price = trackingItem.Price, 
-                            Product = trackingItem.Product, 
-                            ProductDescription = trackingItem.ProductDescription, 
+                            Amount = trackingItem.Amount,
+                            Category = trackingItem.Category,
+                            PaymentIdentifier = trackingItem.PaymentIdentifier,
+                            Price = trackingItem.Price,
+                            Product = trackingItem.Product,
+                            ProductDescription = trackingItem.ProductDescription,
                             ProductType = trackingItem.ProductType,
-                            PurchaseDate = trackingItem.Purchased, 
-                            ArrivedAt = today, 
-                            ShippingAddress = trackingItem.ShippingAddress, 
-                            Store = trackingItem.Store, 
-                            StoreAddress = trackingItem.StoreAddress, 
-                            Total = trackingItem.Total, 
-                            UserId = trackingItem .UserId, 
-                            StoreCity = trackingItem.StoreCity, 
-                            StoreImage = trackingItem.StoreImage, 
-                            ProductImage = trackingItem.ProductImage, 
+                            PurchaseDate = trackingItem.Purchased,
+                            ArrivedAt = today,
+                            ShippingAddress = trackingItem.ShippingAddress,
+                            Store = trackingItem.Store,
+                            StoreAddress = trackingItem.StoreAddress,
+                            Total = trackingItem.Total,
+                            UserId = trackingItem.UserId,
+                            StoreCity = trackingItem.StoreCity,
+                            StoreImage = trackingItem.StoreImage,
+                            ProductImage = trackingItem.ProductImage,
                             CategoryImage = trackingItem.CategoryImage
+                        };
+                        _context.Purchases.Add(purchase);
+                        _context.SaveChanges();
+                        #endregion
+
+                        #region CreateLog
+                        _context.PurchaseLogs.Add(new Database.Entities.PurchaseLog()
+                        {
+                            Amount = trackingItem.Amount,
+                            Category = trackingItem.Category,
+                            PaymentIdentifier = trackingItem.PaymentIdentifier,
+                            Price = trackingItem.Price,
+                            Product = trackingItem.Product,
+                            ProductDescription = trackingItem.ProductDescription,
+                            ProductType = trackingItem.ProductType,
+                            PurchaseDate = trackingItem.Purchased,
+                            ArrivedAt = today,
+                            ShippingAddress = trackingItem.ShippingAddress,
+                            Store = trackingItem.Store,
+                            StoreAddress = trackingItem.StoreAddress,
+                            Total = trackingItem.Total,
+                            StoreCity = trackingItem.StoreCity,
+                            LogMade = today, 
+                            OriginalPurchaseId = purchase.Id, 
+                            Stored = false, 
+                            User = users.Single(u=>u.UserId == trackingItem.UserId).FirstName+" "+ users.Single(u => u.UserId == trackingItem.UserId).LastName,
+                            Message = $"The item: {trackingItem.Product} from {trackingItem.Store} for {trackingItem.Price} has been delivered successfully"
                         });
+                        #endregion
+
                         _context.Trackings.Remove(trackingItem);
                         _context.SaveChanges();
-                        _notificationService.AddNotification($"The item: {trackingItem.Product} from {trackingItem.Store} for {trackingItem.Price} has been successfully", NotificationCategory.Success, _userService.GetAccountId(trackingItem.UserId));
+                        _notificationService.AddNotification($"The item: {trackingItem.Product} from {trackingItem.Store} for {trackingItem.Price} has been delivered successfully", NotificationCategory.Success, _userService.GetAccountId(trackingItem.UserId));
                     }
                 }
             }
@@ -150,10 +181,10 @@ namespace GrocerioApi.Services.Purchase
         {
             var user = _context.Users.Select(x => new { Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
             if (user == null || !user.Active) return null;
-            return _mapper.Map<List<PurchaseModel>>(_context.Purchases.Where(t => t.UserId == userId).ToList());
+            return _mapper.Map<List<PurchaseModel>>(_context.Purchases.Where(t => t.UserId == userId).OrderByDescending(p=>p.PurchaseDate).ToList());
         }
 
-        public BoolResponse ReturnPurchasedItem(int userId, int purchasedItemId)
+        public BoolResponse ReturnPurchasedItem(int userId, int purchasedItemId, string returnReason)
         {
             var response = new BoolResponse() { Success = false };
 
@@ -191,6 +222,11 @@ namespace GrocerioApi.Services.Purchase
             handle and stop the proccess if any errors occur
             */
             #endregion
+
+            var historyLog = _context.PurchaseLogs.Single(h => h.OriginalPurchaseId == purchasedItem.Id);
+            historyLog.Stored = true;
+            historyLog.Message = returnReason;
+            historyLog.LogMade = Get.CurrentDate();
 
             _context.Purchases.Remove(purchasedItem);
             _context.SaveChanges();

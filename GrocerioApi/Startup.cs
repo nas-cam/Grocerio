@@ -27,6 +27,7 @@ using GrocerioApi.Services.ShoppingCart;
 using GrocerioApi.Services.Purchase;
 using GrocerioApi.Workers;
 using GrocerioApi.Services.Notification;
+using GrocerioApi.Services.CustomLogs;
 
 namespace GrocerioApi
 {
@@ -94,6 +95,7 @@ namespace GrocerioApi
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddScoped<IPurchaseService, PurchaseService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<ICustomLogService, CustomLogService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

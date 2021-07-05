@@ -49,11 +49,11 @@ namespace GrocerioApi.Controllers
             return Ok(response);
         }
 
-        [HttpPost("ReturnPurchasedItem/{userId}/{trackingItemId}")]
+        [HttpPost("ReturnPurchasedItem/{userId}/{purchasedItemId}/{returnReason}")]
         [Authorize(Roles = "User")]
-        public ActionResult<StringResponse> ReturnPurchasedItem(int userId, int trackingItemId)
+        public ActionResult<StringResponse> ReturnPurchasedItem(int userId, int purchasedItemId, string returnReason)
         {
-            var response = _purchaseService.ReturnPurchasedItem(userId, trackingItemId);
+            var response = _purchaseService.ReturnPurchasedItem(userId, purchasedItemId, returnReason);
             if (!response.Success) return BadRequest(new StringResponse() { Message = response.Message });
             return Ok(new StringResponse() { Message = response.Message });
         }

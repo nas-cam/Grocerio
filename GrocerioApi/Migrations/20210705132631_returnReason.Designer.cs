@@ -4,14 +4,16 @@ using GrocerioApi.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GrocerioApi.Migrations
 {
     [DbContext(typeof(GrocerioContext))]
-    partial class GrocerioContextModelSnapshot : ModelSnapshot
+    [Migration("20210705132631_returnReason")]
+    partial class returnReason
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,7 +206,7 @@ namespace GrocerioApi.Migrations
                     b.ToTable("Purchases");
                 });
 
-            modelBuilder.Entity("GrocerioApi.Database.Entities.PurchaseLog", b =>
+            modelBuilder.Entity("GrocerioApi.Database.Entities.PurchaseHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -270,7 +272,7 @@ namespace GrocerioApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PurchaseLogs");
+                    b.ToTable("PurchaseHistory");
                 });
 
             modelBuilder.Entity("GrocerioApi.Database.Entities.ShoppingCart", b =>

@@ -13,6 +13,6 @@ namespace GrocerioApi.Services.Purchase
         BoolResponse RefundTrackingItem(int userId, int trackingItemId);
         void MoveTrackingItems();
         List<PurchaseModel> GetPurchasedItems(int userId);
-        BoolResponse ReturnPurchasedItem(int userId, int purchasedItemId);
+        BoolResponse ReturnPurchasedItem(int userId, int purchasedItemId, string returnReason);
     }
 }
