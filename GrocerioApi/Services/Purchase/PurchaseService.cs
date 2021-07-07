@@ -98,6 +98,7 @@ namespace GrocerioApi.Services.Purchase
             var today = Get.CurrentDate();
             var trackingItems = _context.Trackings.Include(t=>t.User).Where(t => t.LastUpdated.Date < today.Date).ToList();
             var users = _context.Users.Select(x => new { x.UserId, x.FirstName, x.LastName }).ToList();
+            var trackingCities = _context.TrackingCities.Select(t => t.Name).ToList();
             if(trackingItems.Count != 0)
             {
                 foreach(var trackingItem in trackingItems)
@@ -108,13 +109,8 @@ namespace GrocerioApi.Services.Purchase
                     if (trackingItem.DaysLeft == 1) trackingItem.CurrentLocation = trackingItem.User.City;
                     else
                     {
-                        StreamReader locationsFile = new StreamReader("./Resources/locations.csv");
-                        string line = null;
-                        List<string> cityArray = new List<string>();
-                        while ((line = locationsFile.ReadLine()) != null) cityArray.Add(line);
-
                         Random randomGenerator = new Random();
-                        trackingItem.CurrentLocation = cityArray[randomGenerator.Next(cityArray.ToList().Count)];
+                        trackingItem.CurrentLocation = trackingCities[randomGenerator.Next(trackingCities.Count)];
                     }
                     _context.SaveChanges();
 
@@ -244,7 +240,7 @@ namespace GrocerioApi.Services.Purchase
             response.Success = true;
             response.Message = "The item has been stored, and the refund issued successfully";
 
-            _notificationService.AddNotification($"Tracking item: {purchasedItem.Product} from {purchasedItem.Store} for {purchasedItem.Price} returned successfully", NotificationCategory.Warning, _userService.GetAccountId(userId));
+            _notificationService.AddNotification($"The item: {purchasedItem.Product} from {purchasedItem.Store} for {purchasedItem.Price} returned successfully", NotificationCategory.Warning, _userService.GetAccountId(userId));
 
 
             return response;

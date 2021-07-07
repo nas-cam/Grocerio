@@ -29,6 +29,7 @@ using GrocerioApi.Workers;
 using GrocerioApi.Services.Notification;
 using GrocerioApi.Services.CustomLogs;
 using GrocerioApi.Services.Card;
+using GrocerioApi.Database.Initializers;
 
 namespace GrocerioApi
 {
@@ -101,12 +102,15 @@ namespace GrocerioApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GrocerioContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //seed database
+            GrocerioInitializer.SeedDatabase(context);
 
             //swagger
             app.UseSwagger();
