@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using GrocerioModels.CreditCard;
 using Newtonsoft.Json;
 
 namespace GrocerioModels.Requests.User
@@ -36,5 +37,8 @@ namespace GrocerioModels.Requests.User
 
         [Required]
         public string ImageLink { get; set; }
+
+        [Required]
+        public NewCreditCardModel MainCreditCard { get; set; }
     }
 }

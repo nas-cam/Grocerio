@@ -303,7 +303,7 @@ namespace GrocerioApi.Services.ShoppingCart
             return response;
         }
 
-        public BoolResponse Checkout(int userId, CreditCardInformation cardInformation)
+        public BoolResponse Checkout(int userId, int creditCardId)
         {
             var response = new BoolResponse() { Success = false };
 
@@ -324,6 +324,23 @@ namespace GrocerioApi.Services.ShoppingCart
             if (user.Locked)
             {
                 response.Message = "The user is currently locked";
+                return response;
+            }
+
+            var creditCard = _context.CreditCards.SingleOrDefault(c => c.Id == creditCardId);
+            if(creditCard == null)
+            {
+                response.Message = "Invalid credit card id";
+                return response;
+            }
+            if(creditCard.UserId != userId)
+            {
+                response.Message = "The forwarded credit card does not belong to the requested user";
+                return response;
+            }
+            if (!creditCard.Active)
+            {
+                response.Message = "The forwarded credit card is currently deactivated";
                 return response;
             }
 
@@ -379,6 +396,7 @@ namespace GrocerioApi.Services.ShoppingCart
                     CategoryImage = cartItem.StoreProduct.Product.Category.ImageLink, 
                     ProductImage = cartItem.StoreProduct.Product.ImageLink, 
                     StoreImage = cartItem.StoreProduct.Store.ImageLink,
+                    CreditCardId = creditCardId,
                     PaymentIdentifier ="XXXAAABBBCCC" //store the one from the payment API
                 });
 

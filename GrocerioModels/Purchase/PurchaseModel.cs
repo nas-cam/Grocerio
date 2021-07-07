@@ -24,5 +24,6 @@ namespace GrocerioModels.Purchase
         public string StoreImage { get; set; }
         public string ProductImage { get; set; }
         public string CategoryImage { get; set; }
+        public string CardNumber { get; set; }
     }
 }

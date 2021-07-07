@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GrocerioModels.CreditCard;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,5 +21,7 @@ namespace GrocerioModels.Users
 
         public int AccountId { get; set; }
         public virtual Account Account { get; set; }
+
+        public CensoredCardData MainCreditCard { get; set; }
     }
 }

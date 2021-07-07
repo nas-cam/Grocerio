@@ -68,11 +68,11 @@ namespace GrocerioApi.Controllers
             return Ok(new StringResponse() { Message = response.Message });
         }
 
-        [HttpPost("Checkout/{userId}")]
+        [HttpPost("Checkout/{userId}/{creditCardId}")]
         [Authorize(Roles = "User")]
-        public ActionResult<StringResponse> Checkout(int userId, [FromBody] CreditCardInformation cardInformation)
+        public ActionResult<StringResponse> Checkout(int userId, int creditCardId)
         {
-            var response = _shoppingCartService.Checkout(userId, cardInformation);
+            var response = _shoppingCartService.Checkout(userId, creditCardId);
             if (!response.Success) return BadRequest(new StringResponse() { Message = response.Message });
             return Ok(new StringResponse() { Message = response.Message});
         }

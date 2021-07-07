@@ -31,5 +31,9 @@ namespace GrocerioApi.Database.Entities
         public string StoreImage { get; set; }
         public string ProductImage { get; set; }
         public string CategoryImage { get; set; }
+
+        [ForeignKey("CreditCard")]
+        public int CreditCardId { get; set; }
+        public CreditCard CreditCard { get; set; }
     }
 }

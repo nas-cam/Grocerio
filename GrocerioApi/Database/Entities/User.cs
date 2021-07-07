@@ -25,5 +25,6 @@ namespace GrocerioApi.Database.Entities
         public virtual Account Account { get; set; }
 
         public List<Tracking> Trackings { get; set; }
+        public List<CreditCard> CreditCards { get; set; }
     }
 }

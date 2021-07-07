@@ -35,7 +35,11 @@ namespace GrocerioApi.Services.Purchase
             var user = _context.Users.Select(x => new { Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
             if (user == null || !user.Active) return null;
 
-            return _mapper.Map<List<TrackingModel>>(_context.Trackings.Where(t => t.UserId == userId).OrderByDescending(t=>t.Purchased).ToList());
+            var dbTrackings = _context.Trackings.Include(t=>t.CreditCard).Where(t => t.UserId == userId).OrderByDescending(t => t.Purchased).ToList();
+            var trackingItems = _mapper.Map<List<TrackingModel>>(dbTrackings);
+            foreach (var trackingItem in trackingItems) trackingItem.CardNumber = Format.CreditCardNumber(dbTrackings.Single(t => t.Id == trackingItem.Id).CreditCard.CardNumber);
+
+            return trackingItems;
         }
 
         public BoolResponse RefundTrackingItem(int userId, int trackingItemId)
@@ -137,7 +141,8 @@ namespace GrocerioApi.Services.Purchase
                             StoreCity = trackingItem.StoreCity,
                             StoreImage = trackingItem.StoreImage,
                             ProductImage = trackingItem.ProductImage,
-                            CategoryImage = trackingItem.CategoryImage
+                            CategoryImage = trackingItem.CategoryImage, 
+                            CreditCardId = trackingItem.CreditCardId
                         };
                         _context.Purchases.Add(purchase);
                         _context.SaveChanges();
@@ -181,7 +186,13 @@ namespace GrocerioApi.Services.Purchase
         {
             var user = _context.Users.Select(x => new { Id = x.UserId, x.Active, x.Locked }).SingleOrDefault(u => u.Id == userId);
             if (user == null || !user.Active) return null;
-            return _mapper.Map<List<PurchaseModel>>(_context.Purchases.Where(t => t.UserId == userId).OrderByDescending(p=>p.PurchaseDate).ToList());
+
+            var dbPurchases = _context.Purchases.Include(p => p.CreditCard).Where(t => t.UserId == userId).OrderByDescending(p => p.PurchaseDate).ToList();
+            var purchasedItems = _mapper.Map<List<PurchaseModel>>(dbPurchases);
+            foreach (var purchasedItem in purchasedItems) purchasedItem.CardNumber = Format.CreditCardNumber(dbPurchases.Single(t => t.Id == purchasedItem.Id).CreditCard.CardNumber);
+
+
+            return purchasedItems;
         }
 
         public BoolResponse ReturnPurchasedItem(int userId, int purchasedItemId, string returnReason)

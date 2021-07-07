@@ -35,5 +35,9 @@ namespace GrocerioApi.Database.Entities
         public string ShippingAddress { get; set; }
         public string PaymentIdentifier { get; set; }
         public string CurrentLocation { get; set; }
+
+        [ForeignKey("CreditCard")]
+        public int CreditCardId { get; set; }
+        public CreditCard CreditCard { get; set; }
     }
 }

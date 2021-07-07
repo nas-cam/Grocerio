@@ -4,14 +4,16 @@ using GrocerioApi.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GrocerioApi.Migrations
 {
     [DbContext(typeof(GrocerioContext))]
-    partial class GrocerioContextModelSnapshot : ModelSnapshot
+    [Migration("20210707080428_CreditCards")]
+    partial class CreditCards
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,12 +89,6 @@ namespace GrocerioApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("AddedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("CVV")
                         .HasColumnType("nvarchar(max)");
@@ -193,9 +189,6 @@ namespace GrocerioApi.Migrations
                     b.Property<string>("CategoryImage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CreditCardId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PaymentIdentifier")
                         .HasColumnType("nvarchar(max)");
 
@@ -239,8 +232,6 @@ namespace GrocerioApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreditCardId");
 
                     b.HasIndex("UserId");
 
@@ -427,9 +418,6 @@ namespace GrocerioApi.Migrations
                     b.Property<string>("CategoryImage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CreditCardId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CurrentLocation")
                         .HasColumnType("nvarchar(max)");
 
@@ -482,8 +470,6 @@ namespace GrocerioApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreditCardId");
 
                     b.HasIndex("UserId");
 
@@ -575,12 +561,6 @@ namespace GrocerioApi.Migrations
 
             modelBuilder.Entity("GrocerioApi.Database.Entities.Purchase", b =>
                 {
-                    b.HasOne("GrocerioApi.Database.Entities.CreditCard", "CreditCard")
-                        .WithMany("Purchases")
-                        .HasForeignKey("CreditCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("GrocerioApi.Database.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -620,12 +600,6 @@ namespace GrocerioApi.Migrations
 
             modelBuilder.Entity("GrocerioApi.Database.Entities.Tracking", b =>
                 {
-                    b.HasOne("GrocerioApi.Database.Entities.CreditCard", "CreditCard")
-                        .WithMany("Trackings")
-                        .HasForeignKey("CreditCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("GrocerioApi.Database.Entities.User", "User")
                         .WithMany("Trackings")
                         .HasForeignKey("UserId")

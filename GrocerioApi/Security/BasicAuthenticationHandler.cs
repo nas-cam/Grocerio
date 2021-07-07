@@ -8,6 +8,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using GrocerioApi.Database.Entities;
 using GrocerioApi.Services.Account;
+using GrocerioApi.Services.Purchase;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,20 +18,26 @@ namespace GrocerioApi.Security
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly IAccountService _accountService;
+        private readonly IPurchaseService _purchaseService;
 
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IAccountService accountService)
+            IAccountService accountService, 
+            IPurchaseService purchaseService
+            )
             : base(options, logger, encoder, clock)
         {
             _accountService = accountService;
+            _purchaseService = purchaseService;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            _purchaseService.MoveTrackingItems();
+
             if (!Request.Headers.ContainsKey("Authorization"))
                 return AuthenticateResult.Fail("Missing Authorization Header");
 

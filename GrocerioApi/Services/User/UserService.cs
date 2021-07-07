@@ -11,6 +11,7 @@ using GrocerioModels.Enums.User;
 using GrocerioModels.Requests.User;
 using GrocerioModels.Response;
 using GrocerioModels.Response.User;
+using GrocerioModels.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
 
@@ -63,6 +64,20 @@ namespace GrocerioApi.Services.User
             _context.Users.Add(user);
             _context.SaveChanges();
 
+            _context.CreditCards.Add(new Database.Entities.CreditCard()
+            {
+                CardHolder = request.MainCreditCard.CardHolder,
+                CardNumber = request.MainCreditCard.CardNumber,
+                CVV = request.MainCreditCard.CVV,
+                Expiration = request.MainCreditCard.Expiration,
+                Main = true,
+                AddedOn = Get.CurrentDate(),
+                UserId = user.UserId,
+                Active = true
+            });
+
+            _context.SaveChanges();
+
             return _mapper.Map<GrocerioModels.Users.User>(user);
         }
 
@@ -77,7 +92,22 @@ namespace GrocerioApi.Services.User
             if (request.Active == Active.IsActive) query = query.Where(m => m.Active);
             if (request.Active == Active.NotActive) query = query.Where(m => !m.Active);
 
-            return _mapper.Map<List<GrocerioModels.Users.User>>(query.OrderBy(u=>u.FirstName).ToList());
+            #region CreditCardData
+            var allUsers = _mapper.Map<List<GrocerioModels.Users.User>>(query.OrderBy(u => u.FirstName).ToList());
+            var creditCards = _context.CreditCards.Select(x => new { x.Id, x.Main, x.CardNumber, x.UserId, x.AddedOn }).ToList();
+            foreach (var user in allUsers) {
+                var mainCreditCard = creditCards.Single(c => c.UserId == user.UserId && c.Main);
+                user.MainCreditCard = new GrocerioModels.CreditCard.CensoredCardData()
+                {
+                    CardId = mainCreditCard.Id, 
+                    Main = mainCreditCard.Main,
+                    CardNumber = Format.CreditCardNumber(mainCreditCard.CardNumber), 
+                    AddedOn = mainCreditCard.AddedOn
+                };
+            }
+            #endregion
+
+            return allUsers;
         }
 
         public BoolResponse ChangeUserActivity(int userId, bool active)
@@ -103,12 +133,23 @@ namespace GrocerioApi.Services.User
 
         public UserResponse GetUserById(int userId)
         {
-            var user = _context.Users.Include(u => u.Account).SingleOrDefault(u => u.UserId == userId);
-            if (user == null) return new UserResponse() {Success = false, User = new GrocerioModels.Users.User()};
+            var dbUser = _context.Users.Include(u => u.Account).SingleOrDefault(u => u.UserId == userId);
+            if (dbUser == null) return new UserResponse() {Success = false, User = new GrocerioModels.Users.User()};
+
+            var user = _mapper.Map<GrocerioModels.Users.User>(dbUser);
+            var mainCreditCard = _context.CreditCards.Select(x=>new { x.Id, x.UserId, x.Main, x.CardNumber, x.AddedOn}).Single(c => c.UserId == user.UserId && c.Main);
+            user.MainCreditCard = new GrocerioModels.CreditCard.CensoredCardData()
+            {
+                Main = mainCreditCard.Main, 
+                CardId = mainCreditCard.Id, 
+                CardNumber = Format.CreditCardNumber(mainCreditCard.CardNumber), 
+                AddedOn = mainCreditCard.AddedOn
+            };
+
             return new UserResponse()
             {
                 Success = true,
-                User = _mapper.Map<GrocerioModels.Users.User>(user)
+                User = user
             };
         }
 
