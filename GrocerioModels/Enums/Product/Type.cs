@@ -12,5 +12,10 @@ namespace GrocerioModels.Enums.Product
         Bag, 
         Stick, 
         Can,
+        FrozenItem, 
+        PlasticItem, 
+        WoodenItem, 
+        ClothItem, 
+        StealItem
     }
 }
