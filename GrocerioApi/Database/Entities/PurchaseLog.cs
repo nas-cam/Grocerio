@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GrocerioModels.Enums.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +26,9 @@ namespace GrocerioApi.Database.Entities
         public DateTime ArrivedAt { get; set; }
         public DateTime LogMade { get; set; }
         public int OriginalPurchaseId { get; set; }
-        public bool Stored { get; set; }
-        public string Message { get; set; }
+        public bool Returned { get; set; }
+        public string ReturnReason { get; set; }
+        public Priority Seriousness { get; set; }
+        public string StringSeriousness { get; set; }
     }
 }

@@ -163,9 +163,11 @@ namespace GrocerioApi.Services.Purchase
                             StoreCity = trackingItem.StoreCity,
                             LogMade = today, 
                             OriginalPurchaseId = purchase.Id, 
-                            Stored = false, 
+                            Returned = false, 
                             User = users.Single(u=>u.UserId == trackingItem.UserId).FirstName+" "+ users.Single(u => u.UserId == trackingItem.UserId).LastName,
-                            Message = $"The item: {trackingItem.Product} from {trackingItem.Store} for {trackingItem.Price} has been delivered successfully"
+                            ReturnReason = "Not returned", 
+                            Seriousness = GrocerioModels.Enums.General.Priority.Insignificant, 
+                            StringSeriousness = GrocerioModels.Enums.General.Priority.Insignificant.ToString().ToLower()
                         });
                         #endregion
 
@@ -191,7 +193,7 @@ namespace GrocerioApi.Services.Purchase
             return purchasedItems;
         }
 
-        public BoolResponse ReturnPurchasedItem(int userId, int purchasedItemId, string returnReason)
+        public BoolResponse ReturnPurchasedItem(int userId, int purchasedItemId, int returnReasonId)
         {
             var response = new BoolResponse() { Success = false };
 
@@ -221,6 +223,13 @@ namespace GrocerioApi.Services.Purchase
                 response.Message = "The item does not belong to the forwarded user";
                 return response;
             }
+
+            var returnReason = _context.ReturnReasons.SingleOrDefault(r => r.Id == returnReasonId);
+            if(returnReason == null)
+            {
+                response.Message = "Invalid return reason id";
+                return response;
+            }
             #endregion
 
             #region ReturnPayment
@@ -230,10 +239,12 @@ namespace GrocerioApi.Services.Purchase
             */
             #endregion
 
-            var historyLog = _context.PurchaseLogs.Single(h => h.OriginalPurchaseId == purchasedItem.Id);
-            historyLog.Stored = true;
-            historyLog.Message = returnReason;
-            historyLog.LogMade = Get.CurrentDate();
+            var purchaseLog = _context.PurchaseLogs.Single(h => h.OriginalPurchaseId == purchasedItem.Id);
+            purchaseLog.Returned = true;
+            purchaseLog.ReturnReason = returnReason.Reason;
+            purchaseLog.Seriousness = returnReason.Seriousness;
+            purchaseLog.StringSeriousness = returnReason.Seriousness.ToString().ToLower();
+            purchaseLog.LogMade = Get.CurrentDate();
 
             _context.Purchases.Remove(purchasedItem);
             _context.SaveChanges();

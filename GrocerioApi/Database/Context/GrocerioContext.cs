@@ -29,5 +29,6 @@ namespace GrocerioApi.Database.Context
         public DbSet<PurchaseLog> PurchaseLogs { get; set; }
         public DbSet<CreditCard> CreditCards { get; set; }
         public DbSet<TrackingCity> TrackingCities { get; set; }
+        public DbSet<ReturnReason> ReturnReasons { get; set; }
     }
 }

@@ -4,14 +4,16 @@ using GrocerioApi.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GrocerioApi.Migrations
 {
     [DbContext(typeof(GrocerioContext))]
-    partial class GrocerioContextModelSnapshot : ModelSnapshot
+    [Migration("20210708093443_ReturnReasons")]
+    partial class ReturnReasons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,6 +268,9 @@ namespace GrocerioApi.Migrations
                     b.Property<DateTime>("LogMade")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("OriginalPurchaseId")
                         .HasColumnType("int");
 
@@ -287,15 +292,6 @@ namespace GrocerioApi.Migrations
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ReturnReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Returned")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Seriousness")
-                        .HasColumnType("int");
-
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -308,8 +304,8 @@ namespace GrocerioApi.Migrations
                     b.Property<string>("StoreCity")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StringSeriousness")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Stored")
+                        .HasColumnType("bit");
 
                     b.Property<double>("Total")
                         .HasColumnType("float");

@@ -21,8 +21,8 @@ namespace GrocerioApi.Services.CustomLogs
         public List<PurchaseLog> GetPurchaseLogs(PurchaseState state, int logAmount, Sort sortDirection)
         {
             var logsQuery = _context.PurchaseLogs.AsQueryable();           
-            if (state == PurchaseState.Stored) logsQuery = logsQuery.Where(l => l.Stored);
-            if (state == PurchaseState.PayedFor) logsQuery = logsQuery.Where(l => !l.Stored);
+            if (state == PurchaseState.Stored) logsQuery = logsQuery.Where(l => l.Returned);
+            if (state == PurchaseState.PayedFor) logsQuery = logsQuery.Where(l => !l.Returned);
             
             switch (sortDirection)
             {
