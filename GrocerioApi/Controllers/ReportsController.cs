@@ -13,6 +13,7 @@ namespace GrocerioApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class ReportsController : ControllerBase
     {
         private readonly IReportService _reportService;
@@ -21,9 +22,9 @@ namespace GrocerioApi.Controllers
         {
             _reportService = reportService;
         }
+
         #region BasicReports
         [HttpPost("CreateBasicReport")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<BasicReportModel> CreateBasicReport([FromBody]ReportParameters parameters)
         {
             var report = _reportService.CreateBasicReport(parameters);
@@ -32,7 +33,6 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpPost("SaveBasicReport")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<BasicReportModel> SaveBasicReport([FromBody] BasicReportModel report)
         {
             var resposne = _reportService.SaveBasicReport(report);
@@ -41,7 +41,6 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("GetAllBasicReports/{storeId}")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<List<ReportRecord>> GetAllBasicReports(int storeId)
         {
             var resposne = _reportService.GetAllBasicReports(storeId);
@@ -50,7 +49,6 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("GetBasicReportById/{reportId}")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<BasicReportModel> GetBasicReportById(int reportId)
         {
             var resposne = _reportService.GetBasicReportById(reportId);
@@ -59,7 +57,6 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("RemoveBasicReport/{reportId}")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<BasicReportModel> RemoveBasicReport(int reportId)
         {
             var resposne = _reportService.RemoveBasicReport(reportId);
@@ -70,7 +67,6 @@ namespace GrocerioApi.Controllers
 
         #region PremiumReports
         [HttpPost("CreatePremiumReport")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<BasicReportModel> CreatePremiumReport([FromBody] ReportParameters parameters)
         {
             var report = _reportService.CreatePremiumReport(parameters);
@@ -79,7 +75,6 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpPost("SavePremiumReport")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<PremiumReportModel> SavePremiumReport([FromBody] PremiumReportModel report)
         {
             var resposne = _reportService.SavePremiumReport(report);
@@ -88,7 +83,6 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("GetAllPremiumReports/{storeId}")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<List<ReportRecord>> GetAllPremiumReports(int storeId)
         {
             var resposne = _reportService.GetAllPremiumReports(storeId);
@@ -97,7 +91,6 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("GetPremiumReportById/{reportId}")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<BasicReportModel> GetPremiumReportById(int reportId)
         {
             var resposne = _reportService.GetPremiumReportById(reportId);
@@ -106,14 +99,12 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("RemovePremiumReport/{reportId}")]
-        [Authorize(Roles = "Admin")]
         public ActionResult<BasicReportModel> RemovePremiumReport(int reportId)
         {
             var resposne = _reportService.RemovePremiumReport(reportId);
             if (!resposne) return NotFound(new StringResponse() { Message = "Invalid report id" });
             return Ok(new StringResponse() { Message = "Premium report removed successfully" });
         }
-
         #endregion
 
     }

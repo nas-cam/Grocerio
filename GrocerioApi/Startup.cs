@@ -32,6 +32,7 @@ using GrocerioApi.Services.Card;
 using GrocerioApi.Database.Initializers;
 using GrocerioApi.Services.ReturnReson;
 using GrocerioApi.Services.Report;
+using GrocerioApi.Services.Analytics;
 
 namespace GrocerioApi
 {
@@ -103,6 +104,7 @@ namespace GrocerioApi
             services.AddScoped<ICardService, CardService>();
             services.AddScoped<IReturnReasonService, ReturnReasonService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IAnalyticsService, AnalyticsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
