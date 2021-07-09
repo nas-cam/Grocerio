@@ -25,5 +25,11 @@ namespace GrocerioApi.Controllers
         {
             return Ok(_service.Insert(request));
         }
+
+        [HttpGet]
+        public ActionResult<List<GrocerioModels.Users.Admin>> GatAllAdmins()
+        {
+            return Ok(_service.GatAllAdmins());
+        }
     }
 }

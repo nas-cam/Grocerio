@@ -7,6 +7,7 @@ using GrocerioApi.Database.Context;
 using GrocerioApi.Services.Account;
 using GrocerioModels.Enums.User;
 using GrocerioModels.Requests.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace GrocerioApi.Services.Admin
 {
@@ -37,6 +38,11 @@ namespace GrocerioApi.Services.Admin
             _context.SaveChanges();
 
             return _mapper.Map<GrocerioModels.Users.Admin>(admin);
+        }
+
+        public List<GrocerioModels.Users.Admin> GatAllAdmins()
+        {
+            return _mapper.Map<List<GrocerioModels.Users.Admin>>(_context.Admins.Include(a => a.Account).ToList());
         }
     }
 }

@@ -8,5 +8,6 @@ namespace GrocerioApi.Services.Admin
     public interface IAdminService
     {
         public GrocerioModels.Users.Admin Insert(GrocerioModels.Requests.User.InsertAdminRequest request);
+        public List<GrocerioModels.Users.Admin> GatAllAdmins();
     }
 }

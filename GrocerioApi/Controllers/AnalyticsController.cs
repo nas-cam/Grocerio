@@ -15,7 +15,7 @@ namespace GrocerioApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class AnalyticsController : ControllerBase
     {
         private readonly IAnalyticsService _analyticsService;
