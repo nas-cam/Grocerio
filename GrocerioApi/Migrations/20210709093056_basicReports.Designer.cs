@@ -4,14 +4,16 @@ using GrocerioApi.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GrocerioApi.Migrations
 {
     [DbContext(typeof(GrocerioContext))]
-    partial class GrocerioContextModelSnapshot : ModelSnapshot
+    [Migration("20210709093056_basicReports")]
+    partial class basicReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,65 +189,6 @@ namespace GrocerioApi.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("GrocerioApi.Database.Entities.PremiumReport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CurrentCartEntries")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CurrentTrackingEntries")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("From")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MainReturnReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MostPopularCategory")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MostPopularClientAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MostPopularProductType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductsReturned")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsSold")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReportName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Revenue")
-                        .HasColumnType("float");
-
-                    b.Property<int>("StoreId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("SuccessRate")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("To")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TopProduct")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StoreId");
-
-                    b.ToTable("PremiumReports");
                 });
 
             modelBuilder.Entity("GrocerioApi.Database.Entities.Product", b =>
@@ -711,15 +654,6 @@ namespace GrocerioApi.Migrations
                     b.HasOne("GrocerioApi.Database.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GrocerioApi.Database.Entities.PremiumReport", b =>
-                {
-                    b.HasOne("GrocerioApi.Database.Entities.Store", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

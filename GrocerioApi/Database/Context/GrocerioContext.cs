@@ -30,5 +30,7 @@ namespace GrocerioApi.Database.Context
         public DbSet<CreditCard> CreditCards { get; set; }
         public DbSet<TrackingCity> TrackingCities { get; set; }
         public DbSet<ReturnReason> ReturnReasons { get; set; }
+        public DbSet<BasicReport> BasicReports { get; set; }
+        public DbSet<PremiumReport> PremiumReports { get; set; }
     }
 }

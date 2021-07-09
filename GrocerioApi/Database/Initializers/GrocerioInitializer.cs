@@ -281,85 +281,99 @@ namespace GrocerioApi.Database.Initializers
                             {
                                 Registered = Get.CurrentDate(), 
                                 StoreId = wallmart.Id, 
-                                ProductId = bread.Id
+                                ProductId = bread.Id, 
+                                Price = 1.5
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = wallmart.Id,
-                                ProductId = chicken.Id
+                                ProductId = chicken.Id, 
+                                Price = 3.5
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = wallmart.Id,
-                                ProductId = haribo.Id
+                                ProductId = haribo.Id, 
+                                Price = 3,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = wallmart.Id,
-                                ProductId = mars.Id
+                                ProductId = mars.Id,
+                                Price = 2,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = wallmart.Id,
-                                ProductId = soap.Id
+                                ProductId = soap.Id,
+                                Price = 1.5,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = wallmart.Id,
-                                ProductId = toothbrush.Id
+                                ProductId = toothbrush.Id,
+                                Price = 3,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = target.Id,
-                                ProductId = shirt.Id
+                                ProductId = shirt.Id,
+                                Price = 30,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = target.Id,
-                                ProductId = pants.Id
+                                ProductId = pants.Id,
+                                Price = 25,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = target.Id,
-                                ProductId = haribo.Id
+                                ProductId = haribo.Id,
+                                Price = 3,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = target.Id,
-                                ProductId = mars.Id
+                                ProductId = mars.Id,
+                                Price = 2,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = ikea.Id,
-                                ProductId = haribo.Id
+                                ProductId = haribo.Id,
+                                Price = 3,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = ikea.Id,
-                                ProductId = mars.Id
+                                ProductId = mars.Id,
+                                Price = 2,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = ikea.Id,
-                                ProductId = table.Id
+                                ProductId = table.Id,
+                                Price = 35,
                             },
                             new StoreProducts()
                             {
                                 Registered = Get.CurrentDate(),
                                 StoreId = ikea.Id,
-                                ProductId = closet.Id
+                                ProductId = closet.Id,
+                                Price = 25,
                             },
                         });
                         context.SaveChanges();
