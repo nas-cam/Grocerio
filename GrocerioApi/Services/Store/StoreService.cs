@@ -489,21 +489,24 @@ namespace GrocerioApi.Services.Store
             }
 
             //filter by available product types
-            if (storeFilters.Types.Count != 0)
+            if (storeFilters.Types != null)
             {
-                List<Database.Entities.Store> tempStores = new List<Database.Entities.Store>();
-                foreach (var store in allStoresQuery.ToList())
+                if (storeFilters.Types.Count != 0)
                 {
-                    foreach (var storeProduct in store.StoreProducts)
+                    List<Database.Entities.Store> tempStores = new List<Database.Entities.Store>();
+                    foreach (var store in allStoresQuery.ToList())
                     {
-                        if (storeFilters.Types.Contains(storeProduct.Product.ProductType))
+                        foreach (var storeProduct in store.StoreProducts)
                         {
-                            tempStores.Add(store);
-                            break;
+                            if (storeFilters.Types.Contains(storeProduct.Product.ProductType))
+                            {
+                                tempStores.Add(store);
+                                break;
+                            }
                         }
                     }
+                    allStoresQuery = tempStores.AsQueryable();
                 }
-                allStoresQuery = tempStores.AsQueryable();
             }
             #endregion
 
