@@ -568,12 +568,18 @@ namespace GrocerioApi.Services.Store
             }
 
             //filter by available categories
-            if (productFilters.CetgoryIds.Count != 0)
-                allProductsQuery = allProductsQuery.Where(p => productFilters.CetgoryIds.Contains(p.Product.CategoryId));
+            if (productFilters.CetgoryIds != null)
+            {
+                if (productFilters.CetgoryIds.Count != 0)
+                    allProductsQuery = allProductsQuery.Where(p => productFilters.CetgoryIds.Contains(p.Product.CategoryId));
+            }
 
             //filter by available product types
-            if (productFilters.Types.Count != 0)
-                allProductsQuery = allProductsQuery.Where(p => productFilters.Types.Contains(p.Product.ProductType));
+            if (productFilters.Types != null)
+            {
+                if (productFilters.Types.Count != 0)
+                    allProductsQuery = allProductsQuery.Where(p => productFilters.Types.Contains(p.Product.ProductType));
+            }
             #endregion
 
             #region ModelCreation
