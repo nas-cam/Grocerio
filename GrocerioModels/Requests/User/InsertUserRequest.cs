@@ -21,13 +21,10 @@ namespace GrocerioModels.Requests.User
         [MinLength(4)]
         public string LastName { get; set; }
 
-        [Required]
-        [RegularExpression(@"\(?\d{3}\)?-? ?/*\d{3}-? *-?\d{3}", ErrorMessage = "Invalid phone format")]
         public string PhoneNumber { get; set; }
 
-        [Required]
-        [MinLength(5)]
         public string Address { get; set; }
+
         [Required]
         [MinLength(3)]
         public string City { get; set; }
@@ -35,7 +32,6 @@ namespace GrocerioModels.Requests.User
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
 
-        [Required]
         public string ImageLink { get; set; }
 
         [Required]
