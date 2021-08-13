@@ -9,7 +9,6 @@ namespace GrocerioModels.Requests.User
 {
     public class InsertUserRequest : InsertAccountRequest
     {
-        [Required]
         [EmailAddress]
         public string Mail { get; set; }
 
