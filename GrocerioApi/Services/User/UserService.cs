@@ -137,12 +137,18 @@ namespace GrocerioApi.Services.User
             if (dbUser == null) return new UserResponse() {Success = false, User = new GrocerioModels.Users.User()};
 
             var user = _mapper.Map<GrocerioModels.Users.User>(dbUser);
-            var mainCreditCard = _context.CreditCards.Select(x=>new { x.Id, x.UserId, x.Main, x.CardNumber, x.AddedOn}).Single(c => c.UserId == user.UserId && c.Main);
+            var mainCreditCard = _context.CreditCards
+                                .Select(x=>new { x.Id, x.UserId, x.Main, x.CardNumber, x.AddedOn, x.Expiration, x.CVV, x.CardHolder})
+                                .Single(c => c.UserId == user.UserId && c.Main);
+
             user.MainCreditCard = new GrocerioModels.CreditCard.CensoredCardData()
             {
-                Main = mainCreditCard.Main, 
-                CardId = mainCreditCard.Id, 
-                CardNumber = Format.CreditCardNumber(mainCreditCard.CardNumber), 
+                Main = mainCreditCard.Main,
+                CardId = mainCreditCard.Id,
+                Expiration = mainCreditCard.Expiration,
+                CVV = mainCreditCard.CVV,
+                CardHolder = mainCreditCard.CardHolder,
+                CardNumber = Format.CreditCardNumber(mainCreditCard.CardNumber),
                 AddedOn = mainCreditCard.AddedOn
             };
 

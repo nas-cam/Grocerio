@@ -69,6 +69,9 @@ namespace GrocerioApi.Services.Card
             return new CensoredCardData()
             {
                 AddedOn = creditCard.AddedOn,
+                Expiration = creditCard.Expiration,
+                CVV = creditCard.CVV,
+                CardHolder = creditCard.CardHolder,
                 CardId = creditCard.Id,
                 CardNumber = Format.CreditCardNumber(creditCard.CardNumber),
                 Main = creditCard.Main, 
