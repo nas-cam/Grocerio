@@ -10,6 +10,6 @@ namespace GrocerioModels.ReturnReason
         public int Id { get; set; }
         public string Reason { get; set; }
         public Priority Seriousness { get; set; }
-        public string StringSeriousness { get; set; }
+        //public string StringSeriousness { get; set; }
     }
 }

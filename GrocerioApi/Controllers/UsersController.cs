@@ -40,7 +40,7 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("GetUserById/{userId}")]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "Admin")]
         public ActionResult<GrocerioModels.Users.User> GetUserById(int userId)
         {
             var response = _userService.GetUserById(userId);
@@ -49,7 +49,7 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("ChangeUserActivity/{userId}/{active}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public ActionResult<StringResponse> ChangeUserActivity(int userId, bool active)
         {
             BoolResponse response = _userService.ChangeUserActivity(userId, active);

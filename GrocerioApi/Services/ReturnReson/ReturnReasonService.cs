@@ -32,7 +32,7 @@ namespace GrocerioApi.Services.ReturnReson
                 Id = newReason.Id, 
                 Reason = newReason.Reason, 
                 Seriousness = newReason.Seriousness, 
-                StringSeriousness = newReason.Seriousness.ToString().ToLower()
+                //StringSeriousness = newReason.Seriousness.ToString().ToLower()
             };
         }
 
@@ -45,7 +45,7 @@ namespace GrocerioApi.Services.ReturnReson
                     Id = reason.Id, 
                     Reason = reason.Reason, 
                     Seriousness = reason.Seriousness, 
-                    StringSeriousness = reason.Seriousness.ToString().ToLower()
+                    //StringSeriousness = reason.Seriousness.ToString().ToLower()
                 });
             return reasons;
         }
@@ -60,7 +60,7 @@ namespace GrocerioApi.Services.ReturnReson
                 Id = returnReason.Id, 
                 Reason = returnReason.Reason, 
                 Seriousness = returnReason.Seriousness, 
-                StringSeriousness = returnReason.Seriousness.ToString().ToLower()
+                //StringSeriousness = returnReason.Seriousness.ToString().ToLower()
             };
         }
 
@@ -77,7 +77,7 @@ namespace GrocerioApi.Services.ReturnReson
                 Id = returnReason.Id,
                 Seriousness = returnReason.Seriousness,
                 Reason = returnReason.Reason,
-                StringSeriousness = returnReason.Seriousness.ToString().ToLower()
+                //StringSeriousness = returnReason.Seriousness.ToString().ToLower()
             };           
         }
 

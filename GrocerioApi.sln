@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrocerioApi", "GrocerioApi\GrocerioApi.csproj", "{E425C852-B4E6-4F27-9E79-14E70CF6078E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrocerioApi", "GrocerioApi\GrocerioApi.csproj", "{E425C852-B4E6-4F27-9E79-14E70CF6078E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrocerioModels", "GrocerioModels\GrocerioModels.csproj", "{D64FE216-FE9B-475E-A710-00F6392CE342}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrocerioModels", "GrocerioModels\GrocerioModels.csproj", "{D64FE216-FE9B-475E-A710-00F6392CE342}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrocerioDesktop", "GrocerioDesktop\GrocerioDesktop.csproj", "{9F6839EF-ECD1-4E49-9335-82E04BF16C3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D64FE216-FE9B-475E-A710-00F6392CE342}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D64FE216-FE9B-475E-A710-00F6392CE342}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D64FE216-FE9B-475E-A710-00F6392CE342}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F6839EF-ECD1-4E49-9335-82E04BF16C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F6839EF-ECD1-4E49-9335-82E04BF16C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F6839EF-ECD1-4E49-9335-82E04BF16C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F6839EF-ECD1-4E49-9335-82E04BF16C3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

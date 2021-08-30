@@ -85,7 +85,10 @@ namespace GrocerioApi.Services.User
         {
             var query = _context.Users.Include(u => u.Account).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(request.FirstName)) query = query.Where(m => m.FirstName.ToLower().StartsWith(request.FirstName.ToLower()));
+            if (!string.IsNullOrWhiteSpace(request.FirstName)) 
+                query = query.Where(m => m.FirstName.ToLower().StartsWith(request.FirstName.ToLower()));
+
+
             if (!string.IsNullOrWhiteSpace(request.LastName)) query = query.Where(m => m.LastName.ToLower().StartsWith(request.LastName.ToLower()));
             if (!string.IsNullOrWhiteSpace(request.Userneme)) query = query.Where(m => m.Account.Username.ToLower().StartsWith(request.Userneme.ToLower()));
 

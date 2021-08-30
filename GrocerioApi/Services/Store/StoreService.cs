@@ -164,17 +164,18 @@ namespace GrocerioApi.Services.Store
             int firstInvalidProductId = 0;
             foreach (var productId in newProductIds)
             {
-                if (!allProductIds.Contains(productId))
+                if (!allProductIds.Contains(productId) || request.ProductItems.Single(pi=>pi.ProductId == productId).Price == 0)
                 {
                     allProductsValid = false;
                     firstInvalidProductId = productId;
                     break;
                 }
+
             }
 
             if (!allProductsValid)
             {
-                response.Message = $"The product id {firstInvalidProductId} does not exist";
+                response.Message = $"The product id {firstInvalidProductId} does not exist, or its price is set to zero";
                 return response;
             }
 

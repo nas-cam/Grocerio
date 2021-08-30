@@ -37,7 +37,7 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpGet("GetById/{returnReasonId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, User")]
         public ActionResult<ReturnReasonModel> GetById(int returnReasonId)
         {
             var response = _returnReasonService.GetById(returnReasonId);
@@ -46,7 +46,7 @@ namespace GrocerioApi.Controllers
         }
 
         [HttpPost("UpdateReturnReason/{returnReasonId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,User")]
         public ActionResult<ReturnReasonModel> UpdateReturnReason(int returnReasonId, [FromBody]InsertReturnReasonRequest request)
         {
             var response = _returnReasonService.UpdateReturnReason(returnReasonId, request);
