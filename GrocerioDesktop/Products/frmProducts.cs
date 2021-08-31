@@ -19,7 +19,7 @@ namespace GrocerioDesktop.Products
         {
             InitializeComponent();
         }
-        private async void frmProducts_Load(object sender, EventArgs e)
+        private void frmProducts_Load(object sender, EventArgs e)
         {
             BindDataGrid(null);
             BindListData();
@@ -27,34 +27,46 @@ namespace GrocerioDesktop.Products
 
         private async void btnSaveProduct_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(lblIdValue.Text))
+            try
             {
-                var body = new InsertProductRequest()
+                if (ValidateProductForm())
                 {
-                    CategoryId = lstCategories.SelectedIndex,
-                    Description = txtProductDesc.Text,
-                    ImageLink = txtImgLink.Text,
-                    Name = txtProductName.Text,
-                    ProductType = (GrocerioModels.Enums.Product.Type)lstProductType.SelectedIndex
-                };
-                await _productService.Insert<InsertProductResponse>(body);
-            }
-            else
-            {
-                var body = new EditProductRequest()
-                {
-                    ProductId = Int32.Parse(lblIdValue.Text),
-                    Name = txtProductName.Text,
-                    Description = txtProductDesc.Text,
-                    ImageLink = txtImgLink.Text,
-                    CategoryId = (int)lstCategories.SelectedValue,
-                    ProductType = (GrocerioModels.Enums.Product.Type)lstProductType.SelectedValue
-                };
-                await _productService.Update<InsertProductResponse>(Int32.Parse(lblIdValue.Text), body, "EditProduct");
-            }
+                    if (string.IsNullOrEmpty(lblIdValue.Text))
+                    {
+                        var body = new InsertProductRequest()
+                        {
+                            CategoryId = lstCategories.SelectedIndex,
+                            Description = txtProductDesc.Text,
+                            ImageLink = txtImgLink.Text,
+                            Name = txtProductName.Text,
+                            ProductType = (GrocerioModels.Enums.Product.Type)lstProductType.SelectedIndex
+                        };
 
-            BindDataGrid(null);
-            ClearData();
+                        await _productService.Insert<InsertProductResponse>(body);
+                    }
+                    else
+                    {
+                        var body = new EditProductRequest()
+                        {
+                            ProductId = Int32.Parse(lblIdValue.Text),
+                            Name = txtProductName.Text,
+                            Description = txtProductDesc.Text,
+                            ImageLink = txtImgLink.Text,
+                            CategoryId = (int)lstCategories.SelectedValue,
+                            ProductType = (GrocerioModels.Enums.Product.Type)lstProductType.SelectedValue
+                        };
+
+                        await _productService.Update<InsertProductResponse>(Int32.Parse(lblIdValue.Text), body, "EditProduct");
+                    }
+
+                    BindDataGrid(null);
+                    ClearData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error:" + ex.Message, "Unhandled error", MessageBoxButtons.OK);
+            }
         }
         private async void dgvProducts_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -178,6 +190,38 @@ namespace GrocerioDesktop.Products
         private void btnClearProductDetails_Click(object sender, EventArgs e)
         {
             ClearData();
+        }
+
+        public bool ValidateProductForm()
+        {
+            if (String.IsNullOrWhiteSpace(txtProductName.Text) || txtProductName.Text.Length < 3 && txtProductName.Text.Length > 15)
+            {
+                MessageBox.Show("Product name field requires 3-15 characters.");
+                return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(txtImgLink.Text))
+            {
+                MessageBox.Show("Product image link field is required.");
+                return false; ;
+            }
+            if (lstCategories.SelectedIndex == 0)
+            {
+                MessageBox.Show("Category field is required");
+                return false; ;
+            }
+            if (String.IsNullOrWhiteSpace(txtProductDesc.Text) || (txtProductDesc.Text.Length < 5 && txtProductDesc.Text.Length > 30))
+            {
+                MessageBox.Show("Store description field is required");
+                return false; ;
+            }
+            if (lstProductType.SelectedIndex == 0)
+            {
+                MessageBox.Show("Product type field is required");
+                return false; ;
+            }
+
+            return true;
         }
     }
 }

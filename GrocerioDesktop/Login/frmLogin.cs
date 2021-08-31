@@ -18,6 +18,7 @@ namespace GrocerioDesktop.Login
         public frmLogin()
         {
             InitializeComponent();
+            txtPassword.PasswordChar = '*';
         }        
 
         private async void btnLogin_Click(object sender, EventArgs e)
@@ -32,7 +33,7 @@ namespace GrocerioDesktop.Login
                 var form = new frmMenu();
                 form.Show();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
    
             }

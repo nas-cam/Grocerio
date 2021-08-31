@@ -54,8 +54,6 @@ namespace GrocerioDesktop.Stores
             this.lblStoreId = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lstStoreMembershipSearch = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSearchStores)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -136,6 +134,7 @@ namespace GrocerioDesktop.Stores
             this.lstStoreProducts.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
             this.lstStoreProducts.Size = new System.Drawing.Size(302, 144);
             this.lstStoreProducts.TabIndex = 7;
+            this.lstStoreProducts.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // lstStoreMembership
             // 
@@ -143,7 +142,9 @@ namespace GrocerioDesktop.Stores
             this.lstStoreMembership.Location = new System.Drawing.Point(171, 229);
             this.lstStoreMembership.Name = "lstStoreMembership";
             this.lstStoreMembership.Size = new System.Drawing.Size(302, 28);
+            this.lstStoreMembership.Sorted = true;
             this.lstStoreMembership.TabIndex = 4;
+            this.lstStoreMembership.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // txtStoreDescription
             // 
@@ -152,6 +153,7 @@ namespace GrocerioDesktop.Stores
             this.txtStoreDescription.Name = "txtStoreDescription";
             this.txtStoreDescription.Size = new System.Drawing.Size(306, 176);
             this.txtStoreDescription.TabIndex = 8;
+            this.txtStoreDescription.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // label9
             // 
@@ -168,6 +170,7 @@ namespace GrocerioDesktop.Stores
             this.txtStoreCity.Name = "txtStoreCity";
             this.txtStoreCity.Size = new System.Drawing.Size(302, 27);
             this.txtStoreCity.TabIndex = 6;
+            this.txtStoreCity.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // txtStoreUniqueNumber
             // 
@@ -175,6 +178,7 @@ namespace GrocerioDesktop.Stores
             this.txtStoreUniqueNumber.Name = "txtStoreUniqueNumber";
             this.txtStoreUniqueNumber.Size = new System.Drawing.Size(302, 27);
             this.txtStoreUniqueNumber.TabIndex = 5;
+            this.txtStoreUniqueNumber.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // txtStoreImageLink
             // 
@@ -182,6 +186,7 @@ namespace GrocerioDesktop.Stores
             this.txtStoreImageLink.Name = "txtStoreImageLink";
             this.txtStoreImageLink.Size = new System.Drawing.Size(302, 27);
             this.txtStoreImageLink.TabIndex = 3;
+            this.txtStoreImageLink.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // txtStoreAddress
             // 
@@ -189,6 +194,7 @@ namespace GrocerioDesktop.Stores
             this.txtStoreAddress.Name = "txtStoreAddress";
             this.txtStoreAddress.Size = new System.Drawing.Size(302, 27);
             this.txtStoreAddress.TabIndex = 2;
+            this.txtStoreAddress.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // txtStoreName
             // 
@@ -196,6 +202,7 @@ namespace GrocerioDesktop.Stores
             this.txtStoreName.Name = "txtStoreName";
             this.txtStoreName.Size = new System.Drawing.Size(302, 27);
             this.txtStoreName.TabIndex = 1;
+            this.txtStoreName.CausesValidationChanged += new System.EventHandler(this.btnSave_Click);
             // 
             // btnClearFormData
             // 
@@ -289,8 +296,6 @@ namespace GrocerioDesktop.Stores
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Controls.Add(this.lstStoreMembershipSearch);
             this.groupBox2.Controls.Add(this.txtSearchStores);
             this.groupBox2.Controls.Add(this.BtnSearchStores);
             this.groupBox2.Location = new System.Drawing.Point(575, 33);
@@ -300,30 +305,12 @@ namespace GrocerioDesktop.Stores
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Search";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(21, 116);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(92, 20);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Membership";
-            // 
-            // lstStoreMembershipSearch
-            // 
-            this.lstStoreMembershipSearch.FormattingEnabled = true;
-            this.lstStoreMembershipSearch.Location = new System.Drawing.Point(21, 149);
-            this.lstStoreMembershipSearch.Name = "lstStoreMembershipSearch";
-            this.lstStoreMembershipSearch.Size = new System.Drawing.Size(456, 28);
-            this.lstStoreMembershipSearch.TabIndex = 3;
-            // 
             // frmStores
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1320, 994);
-            this.ControlBox = false;
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.dgvSearchStores);
@@ -362,12 +349,10 @@ namespace GrocerioDesktop.Stores
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblStoreId;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox lstStoreMembership;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox lstStoreMembershipSearch;
         private System.Windows.Forms.Label lblProducts;
         private System.Windows.Forms.ListBox lstStoreProducts;
+        private System.Windows.Forms.Label label1;
     }
 }

@@ -6,7 +6,9 @@ using System.Windows.Forms;
 using Flurl;
 using Flurl.Http;
 using GrocerioModels.Login;
+using GrocerioModels.Report;
 using GrocerioModels.Response;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GrocerioDesktop
 {
@@ -75,7 +77,7 @@ namespace GrocerioDesktop
             var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/{Username}";
 
             try
-            {    
+            {
                 var response = await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
                 LoginData = response as LoginResponse;
                 return response;
@@ -99,6 +101,13 @@ namespace GrocerioDesktop
         public async Task<T> GetById<T>(object id)
         {
             var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetById/{id}";
+
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
+
+        public async Task<T> GetStoreById<T>(object id)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetStoreById/{id}";
 
             return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
         }
@@ -175,7 +184,7 @@ namespace GrocerioDesktop
             }
         }
 
-        public async Task<T> Update<T>(int id, object request,string method)
+        public async Task<T> Update<T>(int id, object request, string method)
         {
             try
             {
@@ -223,13 +232,13 @@ namespace GrocerioDesktop
         }
 
         public async Task<string> Delete<T>(object id, string method)
-        {      
+        {
             try
             {
                 var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/{method}/{id}";
 
                 return await url.WithBasicAuth(Username, Password).GetJsonAsync();
-                
+
             }
             catch (FlurlHttpException ex)
             {
@@ -293,8 +302,179 @@ namespace GrocerioDesktop
 
         }
 
+        public async Task<T> GetPurchaseLogs<T>(GrocerioModels.Enums.Purchase.PurchaseState state = GrocerioModels.Enums.Purchase.PurchaseState.All, int logAmount = 20, GrocerioModels.Enums.General.Sort sortDirection = GrocerioModels.Enums.General.Sort.DESC)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetPurchaseLogs/{state}/{logAmount}/{sortDirection}";
 
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
 
+        public async Task<T> GetStoreAnalytics<T>(int amount)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetStoreAnalytics/{amount}";
 
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
+
+        public async Task<T> GetProductAnalytics<T>(int amount)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetProductAnalytics/{amount}";
+
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
+
+        public async Task<T> GetCategoryAnalytics<T>(int amount)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetCategoryAnalytics/{amount}";
+
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
+
+        public async Task<T> GetProductTypeAnalytics<T>(int amount)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetProductTypeAnalytics/{amount}";
+
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
+
+        public async Task<T> CreateReport<T>(ReportParameters request, bool isBasic)
+        {
+            var url = "";
+            if (isBasic)
+            {
+                url = $"{Properties.Settings.Default.APIUrl}/{_controller}/CreateBasicReport";
+            }
+            else
+            {
+                url = $"{Properties.Settings.Default.APIUrl}/{_controller}/CreatePremiumReport";
+            }
+            try
+            {
+                return await url.WithBasicAuth(Username, Password).PostJsonAsync(request).ReceiveJson<T>();
+            }
+            catch (FlurlHttpException ex)
+            {
+                var errors = await ex.GetResponseJsonAsync<Dictionary<string, string[]>>();
+
+                var stringBuilder = new StringBuilder();
+                foreach (var error in errors)
+                {
+                    stringBuilder.AppendLine($"{error.Key}, ${string.Join(",", error.Value)}");
+                }
+
+                MessageBox.Show(stringBuilder.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return default;
+            }
+
+        }
+
+        public async Task<T> SaveBasicReport<T>(BasicReportModel report)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/SaveBasicReport";
+
+            try
+            {
+                return await url.WithBasicAuth(Username, Password).PostJsonAsync(report).ReceiveJson<T>();
+            }
+            catch (FlurlHttpException ex)
+            {
+                var errors = await ex.GetResponseJsonAsync<Dictionary<string, string[]>>();
+
+                var stringBuilder = new StringBuilder();
+                foreach (var error in errors)
+                {
+                    stringBuilder.AppendLine($"{error.Key}, ${string.Join(",", error.Value)}");
+                }
+
+                MessageBox.Show(stringBuilder.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return default;
+            }
+        }
+        public async Task<T> SavePremiumReport<T>(PremiumReportModel report)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/SavePremiumReport";
+
+            try
+            {
+                return await url.WithBasicAuth(Username, Password).PostJsonAsync(report).ReceiveJson<T>();
+            }
+            catch (FlurlHttpException ex)
+            {
+                var errors = await ex.GetResponseJsonAsync<Dictionary<string, string[]>>();
+
+                var stringBuilder = new StringBuilder();
+                foreach (var error in errors)
+                {
+                    stringBuilder.AppendLine($"{error.Key}, ${string.Join(",", error.Value)}");
+                }
+
+                MessageBox.Show(stringBuilder.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return default;
+            }
+        }
+
+        public async Task<T> GetAllBasicReports<T>(int storeId)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetAllBasicReports/{storeId}";
+
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
+
+        public async Task<T> GetAllPremiumReports<T>(int storeId)
+        {
+            var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/GetAllPremiumReports/{storeId}";
+
+            return await url.WithBasicAuth(Username, Password).GetJsonAsync<T>();
+        }
+
+        public async Task<T> RemovePremiumReport<T>(int reportId)
+        {
+            try
+            {
+                var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/RemovePremiumReport/{reportId}";
+
+                return await url.WithBasicAuth(Username, Password).GetJsonAsync();
+
+            }
+            catch (FlurlHttpException ex)
+            {
+                var errors = await ex.GetResponseJsonAsync<Dictionary<string, string[]>>();
+
+                var stringBuilder = new StringBuilder();
+                foreach (var error in errors)
+                {
+                    stringBuilder.AppendLine($"{error.Key}, ${string.Join(",", error.Value)}");
+                }
+
+                MessageBox.Show(stringBuilder.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return default;
+                throw;
+            }
+        }
+
+        public async Task<T> RemoveBasicReport<T>(int reportId)
+        {
+            try
+            {
+                var url = $"{Properties.Settings.Default.APIUrl}/{_controller}/RemoveBasicReport/{reportId}";
+
+                return await url.WithBasicAuth(Username, Password).GetJsonAsync();
+
+            }
+            catch (FlurlHttpException ex)
+            {
+                var errors = await ex.GetResponseJsonAsync<Dictionary<string, string[]>>();
+
+                var stringBuilder = new StringBuilder();
+                foreach (var error in errors)
+                {
+                    stringBuilder.AppendLine($"{error.Key}, ${string.Join(",", error.Value)}");
+                }
+
+                MessageBox.Show(stringBuilder.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return default;
+                throw;
+            }
+        }
     }
 }

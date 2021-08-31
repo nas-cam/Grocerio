@@ -186,7 +186,6 @@ namespace GrocerioDesktop.Users
 
         #endregion
 
-        private System.Windows.Forms.TextBox txtUsers;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.DataGridView dgvUsers;

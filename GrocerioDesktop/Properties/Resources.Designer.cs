@@ -63,6 +63,16 @@ namespace GrocerioDesktop.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _24_245780_png_file_log_icon_png {
+            get {
+                object obj = ResourceManager.GetObject("24-245780_png-file-log-icon-png", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap _32441 {
             get {
                 object obj = ResourceManager.GetObject("32441", resourceCulture);

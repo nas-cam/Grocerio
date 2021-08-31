@@ -37,6 +37,7 @@ namespace GrocerioDesktop.Menu
             this.returnReasonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.usersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,7 +53,8 @@ namespace GrocerioDesktop.Menu
             this.productsToolStripMenuItem,
             this.returnReasonsToolStripMenuItem,
             this.usersToolStripMenuItem,
-            this.reportsToolStripMenuItem});
+            this.reportsToolStripMenuItem,
+            this.logsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(165, 688);
@@ -64,16 +66,17 @@ namespace GrocerioDesktop.Menu
             this.dashboardToolStripMenuItem.BackgroundImage = global::GrocerioDesktop.Properties.Resources._677777;
             this.dashboardToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources._677777;
             this.dashboardToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.dashboardToolStripMenuItem.Name = "DashboardToolStripMenuItem";
+            this.dashboardToolStripMenuItem.Name = "dashboardToolStripMenuItem";
             this.dashboardToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
             this.dashboardToolStripMenuItem.Text = "Dashboard";
+            this.dashboardToolStripMenuItem.Click += new System.EventHandler(this.dashboardToolStripMenuItem_Click);
             // 
             // storeToolStripMenuItem
             // 
             this.storeToolStripMenuItem.BackgroundImage = global::GrocerioDesktop.Properties.Resources.shop_store_icon_1320195808011545141;
             this.storeToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources.shop_store_icon_1320195808011545141;
             this.storeToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.storeToolStripMenuItem.Name = "StoreToolStripMenuItem";
+            this.storeToolStripMenuItem.Name = "storeToolStripMenuItem";
             this.storeToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
             this.storeToolStripMenuItem.Text = "Store";
             this.storeToolStripMenuItem.Click += new System.EventHandler(this.StoreToolStripMenuItem_Click);
@@ -82,7 +85,7 @@ namespace GrocerioDesktop.Menu
             // 
             this.categoriesToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources._459_4595417_category_overview_icon_hd_png_download;
             this.categoriesToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.categoriesToolStripMenuItem.Name = "CategoriesToolStripMenuItem";
+            this.categoriesToolStripMenuItem.Name = "categoriesToolStripMenuItem";
             this.categoriesToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
             this.categoriesToolStripMenuItem.Text = "Categories";
             this.categoriesToolStripMenuItem.Click += new System.EventHandler(this.CategoriesToolStripMenuItem_Click);
@@ -91,7 +94,7 @@ namespace GrocerioDesktop.Menu
             // 
             this.productsToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources.linecon_products_round_icon_1320165923260225670;
             this.productsToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.productsToolStripMenuItem.Name = "ProductsToolStripMenuItem";
+            this.productsToolStripMenuItem.Name = "productsToolStripMenuItem";
             this.productsToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
             this.productsToolStripMenuItem.Text = "Products";
             this.productsToolStripMenuItem.Click += new System.EventHandler(this.ProductsToolStripMenuItem_Click);
@@ -100,7 +103,7 @@ namespace GrocerioDesktop.Menu
             // 
             this.returnReasonsToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources._723369;
             this.returnReasonsToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.returnReasonsToolStripMenuItem.Name = "ReturnReasonsToolStripMenuItem";
+            this.returnReasonsToolStripMenuItem.Name = "returnReasonsToolStripMenuItem";
             this.returnReasonsToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
             this.returnReasonsToolStripMenuItem.Text = "Return reasons";
             this.returnReasonsToolStripMenuItem.Click += new System.EventHandler(this.ReturnReasonsToolStripMenuItem_Click);
@@ -109,7 +112,7 @@ namespace GrocerioDesktop.Menu
             // 
             this.usersToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources._324411;
             this.usersToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.usersToolStripMenuItem.Name = "UsersToolStripMenuItem";
+            this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
             this.usersToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
             this.usersToolStripMenuItem.Text = "Users";
             this.usersToolStripMenuItem.Click += new System.EventHandler(this.UsersToolStripMenuItem_Click);
@@ -118,10 +121,19 @@ namespace GrocerioDesktop.Menu
             // 
             this.reportsToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources.source_dataondemand_fr_report_project_icon_report_icon_11553457546u19sfpesx4;
             this.reportsToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.reportsToolStripMenuItem.Name = "ReportsToolStripMenuItem";
+            this.reportsToolStripMenuItem.Name = "reportsToolStripMenuItem";
             this.reportsToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
             this.reportsToolStripMenuItem.Text = "Reports";
             this.reportsToolStripMenuItem.Click += new System.EventHandler(this.ReportsToolStripMenuItem_Click);
+            // 
+            // logsToolStripMenuItem
+            // 
+            this.logsToolStripMenuItem.Image = global::GrocerioDesktop.Properties.Resources._24_245780_png_file_log_icon_png;
+            this.logsToolStripMenuItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.logsToolStripMenuItem.Name = "logsToolStripMenuItem";
+            this.logsToolStripMenuItem.Size = new System.Drawing.Size(152, 27);
+            this.logsToolStripMenuItem.Text = "Logs";
+            this.logsToolStripMenuItem.Click += new System.EventHandler(this.logsToolStripMenuItem_Click);
             // 
             // frmMenu
             // 
@@ -150,5 +162,6 @@ namespace GrocerioDesktop.Menu
         private System.Windows.Forms.ToolStripMenuItem returnReasonsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem usersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reportsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem logsToolStripMenuItem;
     }
 }

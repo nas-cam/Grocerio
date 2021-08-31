@@ -27,32 +27,42 @@ namespace GrocerioDesktop.Categories
 
         private async void BtnSaveCategory_Click(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(lblId.Text))
+            if (ValidateCategoryForm())
             {
-                var body = new InsertCategoryRequest()
+                if (String.IsNullOrEmpty(lblId.Text))
                 {
-                    Name = txtNameCat.Text,
-                    Description = txtDescCat.Text,
-                    ImageLink = txtImgLink.Text
-                };
-                await _categoriesService.Insert<InsertCategoryResponse>(body);
-            }
-            else
-            {
-                var body = new EditCategoryRequest()
+                    var body = new InsertCategoryRequest()
+                    {
+                        Name = txtNameCat.Text,
+                        Description = txtDescCat.Text,
+                        ImageLink = txtImgLink.Text
+                    };
+                    if (body.Description == "")
+                        return;
+                    else
+                        await _categoriesService.Insert<InsertCategoryResponse>(body);
+                }
+                else
                 {
-                    CategoryId= Int32.Parse(lblId.Text),
-                    Name = txtNameCat.Text,
-                    Description = txtDescCat.Text,
-                    ImageLink = txtImgLink.Text
-                };
-                await _categoriesService.Update<InsertCategoryResponse>(Int32.Parse(lblId.Text),body,"EditCategory");
-            }
+                    var body = new EditCategoryRequest()
+                    {
+                        CategoryId = Int32.Parse(lblId.Text),
+                        Name = txtNameCat.Text,
+                        Description = txtDescCat.Text,
+                        ImageLink = txtImgLink.Text
+                    };
+                    if (body.Description == "")
+                        return;
 
-            ClearFields();
-            BindDataGrid(null);
+                    else
+                        await _categoriesService.Update<InsertCategoryResponse>(Int32.Parse(lblId.Text), body, "EditCategory");
+                }
+
+                ClearFields();
+                BindDataGrid(null);
+            }
         }
-
+        
         private async void dgvCategories_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             var id = dgvCategories.Rows[e.RowIndex].Cells[0].Value;
@@ -63,7 +73,6 @@ namespace GrocerioDesktop.Categories
             txtDescCat.Text = category.Description;
             txtImgLink.Text = category.ImageLink;
         }
-
 
         private async void BindDataGrid(object search)
         {
@@ -98,6 +107,26 @@ namespace GrocerioDesktop.Categories
         {
             txtSearchCategories.Text = "";
             BindDataGrid(null);
+        }
+         
+        private bool ValidateCategoryForm()
+        {
+            if(String.IsNullOrEmpty(txtNameCat.Text))
+            {
+                MessageBox.Show("Category name field is required");
+                return false;
+            }
+            if (String.IsNullOrEmpty(txtImgLink.Text))
+            {
+                MessageBox.Show("Image link field is required");
+                return false; ;
+            }
+            if (String.IsNullOrEmpty(txtDescCat.Text))
+            {
+                MessageBox.Show("Category description field is required");
+                return false; ;
+            }
+            return true;
         }
     }
 }

@@ -1,4 +1,7 @@
 ﻿using GrocerioDesktop.Categories;
+using GrocerioDesktop.Dashboard;
+using GrocerioDesktop.GrocerioLogs;
+using GrocerioDesktop.Login;
 using GrocerioDesktop.Products;
 using GrocerioDesktop.Reports;
 using GrocerioDesktop.ReturnReasons;
@@ -102,6 +105,34 @@ namespace GrocerioDesktop.Menu
             };
             form.Show();
 
+        }
+
+        private void logsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            foreach (Form frm in this.MdiChildren)
+            {
+                frm.Close();
+            }
+             frmGrocerioLogs form = new frmGrocerioLogs
+             {
+                MdiParent = this
+            };
+            form.Show();
+
+        }
+
+        private void dashboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Form frm in this.MdiChildren)
+            {
+                frm.Close();
+            }
+            frmDashboard form = new frmDashboard
+            {
+                MdiParent = this
+            };
+            form.Show();
         }
     }
 }
