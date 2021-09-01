@@ -72,10 +72,7 @@ namespace GrocerioApi
                                 Id = "basicAuth" }
                         }, new List<string>() }
                 });
-            });
-
-
-            //Database
+            });     
             services.AddDbContext<GrocerioContext>(options => options.UseSqlServer(Configuration.GetConnectionString("connString")));
 
 

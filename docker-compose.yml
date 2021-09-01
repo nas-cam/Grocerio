@@ -1,0 +1,33 @@
+version: '3'
+services:
+#mssql docker
+  groceriodb2-sql:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Pa55w0rd2019
+      - MSSQL_PID=Developer
+    ports:
+      - 1402:1433
+    networks:
+      - grocerionet
+
+  grocerio-api:
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - ConnectionStrings:connString=Server=groceriodb2-sql,1433;Database=groceriodb;User=sa;Password=Pa55w0rd2019;ConnectRetryCount=0
+    ports:
+      - 13244:13244
+    networks:
+      - grocerionet
+    links:
+      - groceriodb2-sql
+    depends_on:
+      - groceriodb2-sql
+      
+networks:
+  grocerionet:
+    driver: bridge

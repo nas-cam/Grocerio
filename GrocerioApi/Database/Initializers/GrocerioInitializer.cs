@@ -1,6 +1,7 @@
 ﻿using GrocerioApi.Database.Context;
 using GrocerioApi.Database.Entities;
 using GrocerioModels.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ namespace GrocerioApi.Database.Initializers
     {
         public static void SeedDatabase(GrocerioContext context)
         {
+            context.Database.Migrate();
 
             #region SeedUsers
             if (!context.Accounts.Any())
